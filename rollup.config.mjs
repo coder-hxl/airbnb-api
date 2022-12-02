@@ -9,5 +9,6 @@ export default {
     format: 'es',
     compact: true
   },
+  external: ['koa', 'dotenv'],
   plugins: [tsPlugin(), terserPlugin(), runPlugin()]
 }
