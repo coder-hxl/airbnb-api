@@ -1,9 +1,10 @@
 import Koa from 'koa'
 
-const app = new Koa()
+import useRouter from '@/router'
 
-app.use((ctx) => {
-  ctx.body = 'Hello Airbnb-API'
-})
+import { IApp } from './types'
+
+const app: IApp = new Koa()
+app.useRouter = useRouter
 
 export default app

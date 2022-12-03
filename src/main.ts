@@ -1,3 +1,5 @@
+import 'module-alias/register'
+
 import app from '@/app'
 
 import { APP_PORT } from '@/app/config'
