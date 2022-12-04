@@ -5,9 +5,10 @@ import runPlugin from '@rollup/plugin-run'
 export default {
   input: 'src/main.ts',
   output: {
-    file: 'build/index.mjs',
-    format: 'es',
-    compact: true
+    dir: 'build',
+    format: 'cjs',
+    compact: true,
+    preserveModules: true
   },
   external: ['koa', 'dotenv'],
   plugins: [tsPlugin(), terserPlugin(), runPlugin()]

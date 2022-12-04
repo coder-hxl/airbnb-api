@@ -7,4 +7,6 @@ import { IApp } from './types'
 const app: IApp = new Koa()
 app.useRouter = useRouter
 
+app.useRouter()
+
 export default app
