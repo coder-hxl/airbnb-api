@@ -1,6 +1,5 @@
 import app from '@/app'
-
-// import '@/app/database'
+import '@/app/database'
 
 import { APP_PORT } from '@/app/config'
 

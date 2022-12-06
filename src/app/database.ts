@@ -10,7 +10,7 @@ import {
 
 const pool = mysql.createPool({
   host: MYSQL_HOST,
-  port: MYSQL_PORT as any as number,
+  port: MYSQL_PORT as any,
   user: MYSQL_USER,
   password: MYSQL_PASSWORD,
   database: MYSQL_DATABASE

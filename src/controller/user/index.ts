@@ -8,7 +8,10 @@ const userController: IUserController = {
 
     const result = await userService.create(userInfo)
 
-    ctx.body = result
+    ctx.body = {
+      code: 200,
+      data: result
+    }
   }
 }
 
