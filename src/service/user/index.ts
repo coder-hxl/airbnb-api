@@ -4,7 +4,7 @@ import mapSqlStatement from '@/utils/mapSqlStatement'
 import { USER_TABLE_CREATE, USER_TABLE_NAME } from '@/constants/table'
 
 import type { ResultSetHeader } from 'mysql2'
-import IUserService from './types'
+import type IUserService from './types'
 
 const userService: IUserService = {
   async create(userInfo) {
