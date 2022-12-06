@@ -1,5 +1,5 @@
-import { Middleware } from '@koa/router'
+import { IControllerMiddleware } from '../types'
 
 export default interface IUserController {
-  create: Middleware
+  create: IControllerMiddleware
 }
