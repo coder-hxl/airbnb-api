@@ -1,3 +1,7 @@
 export interface ICommonService {
-  query(tableName: string, field: string, value: any): Promise<any[]>
+  query<T = any>(
+    tableName: string,
+    field: string | string[],
+    value: any
+  ): Promise<T[]>
 }
