@@ -3,9 +3,33 @@ import { ICommonService } from './types'
 
 const commonService: ICommonService = {
   async query(tableName, field, value) {
-    const statement = `SELECT * FROM ${tableName} WHERE ${field} = ?;`
+    let statement = `SELECT * FROM ${tableName} `
 
-    const [result] = await pool.execute<any>(statement, [value])
+    if (Array.isArray(field)) {
+      let isFirst = true
+      const wheres =
+        field
+          .map((item) => {
+            if (isFirst) {
+              isFirst = false
+              return `WHERE ${item} = ?`
+            } else {
+              return `AND ${item} = ?`
+            }
+          })
+          .join(' ') + ';'
+
+      statement += wheres
+    } else if (typeof field === 'string') {
+      statement += `WHERE ${field} = ?;`
+    } else {
+      statement += ';'
+    }
+
+    const [result] = await pool.execute<any>(
+      statement,
+      Array.isArray(value) ? value : [value]
+    )
 
     return result
   }
