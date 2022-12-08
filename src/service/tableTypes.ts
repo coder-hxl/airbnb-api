@@ -9,6 +9,6 @@ export interface IUserTable extends ICommonField {
   nickname?: string
   password: string
   cellphone: string
-  introduction?: string
+  introduce?: string
   avatarUrl?: string
 }

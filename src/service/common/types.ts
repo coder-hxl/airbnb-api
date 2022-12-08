@@ -1,7 +1,5 @@
+import type { AnyObject } from '@/types/commonTypes'
+
 export interface ICommonService {
-  query<T = any>(
-    tableName: string,
-    field: string | string[],
-    value: any
-  ): Promise<T[]>
+  select<T = any>(tableName: string, field?: AnyObject): Promise<T[]>
 }
