@@ -13,17 +13,17 @@ import type { IUserTable } from '@/service/tableTypes'
 export const verifyCreateUser: Middleware = async (ctx, next) => {
   const { name, cellphone } = ctx.request.body as IUserTable
   // 1.验证 用户名 是否存在
-  const nameResult = await commonService.query(USER_TABLE_NAME, 'name', name)
+  const nameResult = await commonService.select(USER_TABLE_NAME, {
+    name
+  })
   if (nameResult.length) {
     return ctx.app.emit('error', new Error(errorTypes.NAME_IS_EXISTS), ctx)
   }
 
   // 2.验证 手机号 是否存在
-  const cellphoneResult = await commonService.query(
-    USER_TABLE_NAME,
-    'cellphone',
+  const cellphoneResult = await commonService.select(USER_TABLE_NAME, {
     cellphone
-  )
+  })
   if (cellphoneResult.length) {
     return ctx.app.emit('error', new Error(errorTypes.CELLPHONE_IS_EXISTS), ctx)
   }
@@ -35,11 +35,10 @@ export const verifyLogin: Middleware = async (ctx, next) => {
   const { name, password } = ctx.request.body
 
   // 验证账号和密码是否正确
-  const [user] = await commonService.query<IUserTable>(
-    USER_TABLE_NAME,
-    ['name', 'password'],
-    [name, hashCrypto(password)]
-  )
+  const [user] = await commonService.select<IUserTable>(USER_TABLE_NAME, {
+    name,
+    password: hashCrypto(password)
+  })
 
   if (!Object.keys(user).length) {
     return ctx.app.emit(

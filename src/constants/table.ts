@@ -4,6 +4,6 @@ export const USER_TABLE_CREATE = [
   'nickname',
   'password',
   'cellphone',
-  'introduction',
+  'introduce',
   'avatarUrl'
 ]

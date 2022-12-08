@@ -2,34 +2,29 @@ import pool from '@/app/database'
 import { ICommonService } from './types'
 
 const commonService: ICommonService = {
-  async query(tableName, field, value) {
+  async select(tableName, field = {}) {
+    const keys = Object.keys(field)
+    const values = Object.values(field)
+
     let statement = `SELECT * FROM ${tableName} `
 
-    if (Array.isArray(field)) {
+    if (keys.length) {
       let isFirst = true
-      const wheres =
-        field
-          .map((item) => {
-            if (isFirst) {
-              isFirst = false
-              return `WHERE ${item} = ?`
-            } else {
-              return `AND ${item} = ?`
-            }
-          })
-          .join(' ') + ';'
-
-      statement += wheres
-    } else if (typeof field === 'string') {
-      statement += `WHERE ${field} = ?;`
-    } else {
-      statement += ';'
+      statement += keys
+        .map((key) => {
+          if (isFirst) {
+            isFirst = false
+            return `WHERE ${key} = ?`
+          } else {
+            return `AND ${key} = ?`
+          }
+        })
+        .join(' ')
     }
 
-    const [result] = await pool.execute<any>(
-      statement,
-      Array.isArray(value) ? value : [value]
-    )
+    statement += ';'
+
+    const [result] = await pool.execute<any>(statement, values)
 
     return result
   }
