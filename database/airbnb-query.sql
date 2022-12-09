@@ -1,5 +1,6 @@
 CREATE DATABASE airbnb;
 
+
 CREATE TABLE IF NOT EXISTS `user`(
   id INT PRIMARY KEY AUTO_INCREMENT,
 	name VARCHAR(20) NOT NULL UNIQUE,
@@ -13,7 +14,6 @@ CREATE TABLE IF NOT EXISTS `user`(
 );
 
 -- INSERT INTO user (name, password, cellphone, introduction, avatarUrl) VALUES ('coderhxl2', 'coderhxl001', '13680688888', '你好啊', Null);
-
 -- ALTER TABLE user MODIFY cellphone VARCHAR(255) NOT NULL UNIQUE;
 -- ALTER TABLE user ADD nickname VARCHAR(20);
 -- ALTER TABLE user MODIFY name VARCHAR(20) NOT NULL UNIQUE;
@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS `user`(
 CREATE TABLE IF NOT EXISTS `region`(
 	id INT PRIMARY KEY AUTO_INCREMENT,
 	name VARCHAR(255) NOT NULL UNIQUE,
+	type INT NOT NULL,
 	parentId INT,
 	createAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updateAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -30,10 +31,24 @@ CREATE TABLE IF NOT EXISTS `region`(
 	FOREIGN KEY (parentId) REFERENCES region(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+-- ALTER TABLE region ADD type INT NOT NULL;
+-- INSERT INTO region (name, type) VALUES ('中国', 1);
+-- INSERT INTO region (name, type, parentId) VALUES ('广东', 2, 1);
+-- INSERT INTO region (name, type, parentId) VALUES ('阳江', 3, 2);
+-- INSERT INTO region (name, type, parentId) VALUES ('广州', 3, 2);
+-- INSERT INTO region (name, type, parentId) VALUES ('佛山', 3, 2);
+-- INSERT INTO region (name, type, parentId) VALUES ('台湾', 2, 1);
+-- INSERT INTO region (name, type, parentId) VALUES ('台北', 3, 7);
+-- INSERT INTO region (name, type, parentId) VALUES ('新北', 3, 7);
+-- INSERT INTO region (name, type, parentId) VALUES ('湖南', 2, 1);
+-- INSERT INTO region (name, type, parentId) VALUES ('长沙', 3, 10);
+-- INSERT INTO region (name, type, parentId) VALUES ('永州', 3, 10);
+
 
 CREATE TABLE IF NOT EXISTS `room`(
 	id INT PRIMARY KEY AUTO_INCREMENT,
 	name VARCHAR(50) NOT NULL,
+	address VARCHAR(255) NOT NULL,
 	introduce VARCHAR(255),
 	userId INT NOT NULL,
 	regionId INT NOT NULL,
@@ -44,6 +59,8 @@ CREATE TABLE IF NOT EXISTS `room`(
 	FOREIGN KEY (regionId) REFERENCES region(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+-- ALTER TABLE room ADD address VARCHAR(255) NOT NULL;
+
 
 CREATE TABLE IF NOT EXISTS `verify_tab`(
 	id INT PRIMARY KEY AUTO_INCREMENT,
@@ -51,6 +68,14 @@ CREATE TABLE IF NOT EXISTS `verify_tab`(
 	createAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updateAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
+-- INSERT INTO verify_tab (name) VALUES ('独立房间');
+-- INSERT INTO verify_tab (name) VALUES ('整套公寓');
+-- INSERT INTO verify_tab (name) VALUES ('酒店房间');
+-- INSERT INTO verify_tab (name) VALUES ('1张床');
+-- INSERT INTO verify_tab (name) VALUES ('2张床');
+-- INSERT INTO verify_tab (name) VALUES ('1室1卫1床');
+-- INSERT INTO verify_tab (name) VALUES ('1室1卫2床');
 
 
 CREATE TABLE IF NOT EXISTS `r_room_verify_tab`(
