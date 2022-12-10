@@ -35,6 +35,13 @@ CREATE TABLE IF NOT EXISTS `region`(
 -- INSERT INTO region (name, type) VALUES ('中国', 1);
 -- INSERT INTO region (name, type, parentId) VALUES ('广东', 2, 1);
 -- INSERT INTO region (name, type, parentId) VALUES ('阳江', 3, 2);
+-- INSERT INTO region (name, type, parentId) VALUES ('海陵岛', 4, 4);
+-- INSERT INTO region (name, type, parentId) VALUES ('敏捷黄金海岸', 4, 4);
+-- INSERT INTO region (name, type, parentId) VALUES ('十里银滩', 4, 4);
+-- INSERT INTO region (name, type, parentId) VALUES ('北洛秘境', 4, 4);
+-- INSERT INTO region (name, type, parentId) VALUES ('月亮湾', 4, 4);
+-- INSERT INTO region (name, type, parentId) VALUES ('沙扒湾', 4, 4);
+-- INSERT INTO region (name, type, parentId) VALUES ('百利广场', 4, 4);
 -- INSERT INTO region (name, type, parentId) VALUES ('广州', 3, 2);
 -- INSERT INTO region (name, type, parentId) VALUES ('佛山', 3, 2);
 -- INSERT INTO region (name, type, parentId) VALUES ('台湾', 2, 1);
@@ -49,7 +56,7 @@ CREATE TABLE IF NOT EXISTS `room`(
 	id INT PRIMARY KEY AUTO_INCREMENT,
 	name VARCHAR(50) NOT NULL,
 	address VARCHAR(255) NOT NULL,
-	introduce VARCHAR(255),
+	introduce VARCHAR(800),
 	userId INT NOT NULL,
 	regionId INT NOT NULL,
 	createAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -60,34 +67,33 @@ CREATE TABLE IF NOT EXISTS `room`(
 );
 
 -- ALTER TABLE room ADD address VARCHAR(255) NOT NULL;
+ALTER TABLE room MODIFY introduce VARCHAR(800);
 
 
-CREATE TABLE IF NOT EXISTS `verify_tab`(
+CREATE TABLE IF NOT EXISTS `room_type_tab`(
 	id INT PRIMARY KEY AUTO_INCREMENT,
 	name VARCHAR(10) NOT NULL UNIQUE,
 	createAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updateAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- INSERT INTO verify_tab (name) VALUES ('独立房间');
--- INSERT INTO verify_tab (name) VALUES ('整套公寓');
--- INSERT INTO verify_tab (name) VALUES ('酒店房间');
--- INSERT INTO verify_tab (name) VALUES ('1张床');
--- INSERT INTO verify_tab (name) VALUES ('2张床');
--- INSERT INTO verify_tab (name) VALUES ('1室1卫1床');
--- INSERT INTO verify_tab (name) VALUES ('1室1卫2床');
+-- INSERT INTO room_type_tab (name) VALUES ('公寓');
+-- INSERT INTO room_type_tab (name) VALUES ('酒店');
+-- INSERT INTO room_type_tab (name) VALUES ('别墅');
 
 
-CREATE TABLE IF NOT EXISTS `r_room_verify_tab`(
+CREATE TABLE IF NOT EXISTS `r_room_room_type_tab`(
 	id INT PRIMARY KEY AUTO_INCREMENT,
 	roomId INT NOT NULL,
-	verifyTabId INT NOT NULL,
+	roomTypeTabId INT NOT NULL,
 	createAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updateAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
 	FOREIGN KEY (roomId) REFERENCES room(id) ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY (verifyTabId) REFERENCES verify_tab(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+-- ALTER TABLE r_room_room_type_tab CHANGE verifyTabId roomTypeTabId INT NOT NULL;
 
 
 CREATE TABLE IF NOT EXISTS `review`(
@@ -118,7 +124,7 @@ CREATE TABLE IF NOT EXISTS `review`(
 
 
 
-
+SELECT * FROM room_type_tab;
 
 
 
