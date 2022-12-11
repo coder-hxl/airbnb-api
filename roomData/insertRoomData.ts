@@ -1,3 +1,6 @@
+import https from 'node:https'
+import fs from 'node:fs'
+
 import pool from '../src/app/database'
 
 import * as roomData from './roomData'
@@ -119,8 +122,24 @@ async function insertRoomData(data: IData) {
 
 // insertRoomData(roomData.haiLingDao)
 
-const keys = Object.keys(roomData)
-for (const key of keys) {
-  const data = roomData as any
-  insertRoomData(data[key])
-}
+// const keys = Object.keys(roomData)
+// for (const key of keys) {
+//   const data = roomData as any
+//   insertRoomData(data[key])
+// }
+
+// for (const item of roomData.haiLingDao.list) {
+//   const { id } = item
+//   const fileDir = './upload/room/' + id + '/'
+//   fs.mkdirSync(fileDir)
+
+//   item.pictureUrl.forEach((url, i) => {
+//     const time = new Date().getTime()
+//     const filename = i + time + 'rid' + id + '.jpg'
+//     const path = fileDir + filename
+
+//     https.get(url, (res) => {
+//       res.pipe(fs.createWriteStream(path))
+//     })
+//   })
+// }
