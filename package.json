@@ -17,6 +17,7 @@
     "@koa/router": "^12.0.0",
     "axios": "^1.2.1",
     "dotenv": "^16.0.3",
+    "jimp": "^0.16.2",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.4",
     "koa-body": "^6.0.1",
