@@ -1,21 +1,8 @@
-import pool from '../src/app/database'
+import pool from '@/app/database'
 
 import * as roomData from './roomData'
 
-type IRoom = {
-  id: number
-  userId: number
-  name: string
-  address: string
-  introduce: string
-  pictureUrl: string[]
-  typeTabIds?: number[]
-}
-
-type IData = {
-  region: string
-  list: IRoom[]
-}
+import type { IRoom, IData } from './types'
 
 type IRegion = {
   id: number
@@ -117,7 +104,7 @@ async function insertRoomData(data: IData) {
   console.log(`插入 ${data.region} 数据完成, 数据总数: ${data.list.length}`)
 }
 
-insertRoomData(roomData.haiLingDao)
+// insertRoomData(roomData.haiLingDao)
 
 const keys = Object.keys(roomData)
 for (const key of keys) {
