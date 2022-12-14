@@ -29,16 +29,15 @@ function storeToDatabase(
   pool
     .execute(statement, [url, filename, 'image/jpeg', fileSize, roomId])
     .then(() => {
-      const { name, expectSum, saveSum, discardSum } = counter
+      const { name, expectSum, discardSum } = counter
 
-      console.log(
-        `| ${name} | 期待: ${expectSum} | 当前: ${
-          1 + saveSum + discardSum
-        } | 保留: ${1 + saveSum} | 丢弃: ${discardSum}  |`
-      )
-
-      if (counter.expectSum == ++counter.saveSum + counter.discardSum) {
+      if (expectSum == ++counter.saveSum + discardSum) {
         console.log(`${name} 完成~`)
+        console.log(
+          `| ${name} | 期待: ${expectSum} | 当前: ${
+            counter.saveSum + discardSum
+          } | 保留: ${counter.saveSum} | 丢弃: ${discardSum}  |`
+        )
       }
     })
 }
@@ -52,6 +51,9 @@ function installImg(
 ) {
   const getRes = https.get(url, { agent }, (res) => {
     const content: Buffer[] = []
+
+    counter.expectSum++
+
     res.on('data', (d) => content.push(d))
 
     res.on('end', () => {
@@ -71,7 +73,7 @@ function installImg(
   })
 
   getRes.on('error', async (err: any) => {
-    console.log(getRes.reusedSocket, err.code)
+    // console.log(getRes.reusedSocket, err.code)
     if (getRes.reusedSocket && err.code == 'ECONNRESET') {
       installImg(url, storePath, filename, roomId, counter)
     } else {
@@ -82,13 +84,13 @@ function installImg(
 
 async function imgHandle(data: IData) {
   const { region, list } = data
-
   const counter: ICounter = {
     name: region,
     expectSum: 0,
     saveSum: 0,
     discardSum: 0
   }
+  let isReq = false
 
   console.log(`开始下载 ${region} 房间图片~`)
 
@@ -98,11 +100,10 @@ async function imgHandle(data: IData) {
 
     if (fs.existsSync(fileDir)) return
 
+    isReq = true
     fs.mkdirSync(fileDir)
 
     item.pictureUrl.forEach((url) => {
-      counter.expectSum++
-
       const time = new Date().getTime()
       const filename = `${time}r${id}.jpg`
       const path = `${fileDir}/${filename}`
@@ -111,7 +112,7 @@ async function imgHandle(data: IData) {
     })
   })
 
-  if (counter.expectSum === 0) {
+  if (!isReq) {
     console.log(`无需下载 ${region} 房间图片~`)
   }
 }
