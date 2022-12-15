@@ -13,6 +13,6 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts"],
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "roomData/**/*.ts"],
   "exclude": ["node_modules"]
 }
