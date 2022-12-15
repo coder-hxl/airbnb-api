@@ -1,35 +1,43 @@
-import axios from 'axios'
+import https from 'node:https'
+import URL from 'node:url'
 
-import { headers, getRoomListUrl, getRoomDetailUrl, getImgUrl } from './config'
+import { headers, getRoomDetailUrl, getImgUrl } from './config'
 
-type IGetRoomDetailsRes = {
-  id: number
-  userId: number
-  name: string
-  address: string
-  introduce: string
-  pictureUrl?: string[]
-}[]
+import type { IRoomData } from './types'
 
 type IGetPictureRes = {
   roomId: number
   imgUrls: string[]
 }[]
 
-function getRoomDetails(userId: number, ids: number[]) {
-  return new Promise<IGetRoomDetailsRes>((result) => {
-    const getRes: IGetRoomDetailsRes = []
+function get<T = any>(url: string) {
+  const { host, pathname, search } = new URL.URL(url)
+  const path = pathname + search
+  return new Promise<T>((resolve) => {
+    https.get({ headers, host, path }, (res) => {
+      const content: Buffer[] = []
+      res.on('data', (chunk) => content.push(chunk))
+      res.on('end', () =>
+        resolve(JSON.parse(Buffer.concat(content).toString()))
+      )
+    })
+  })
+}
+
+function getRoomDetails(userId: number, searchName: string, ids: number[]) {
+  return new Promise<IRoomData>((result) => {
+    const getRes: IRoomData = { region: searchName, list: [] }
     ids.forEach((id) => {
-      axios.get(getRoomDetailUrl(id), { headers }).then((res) => {
-        const data = res.data.data[0]
-        getRes.push({
+      get(getRoomDetailUrl(id)).then((res) => {
+        const data = res.data[0]
+        getRes.list.push({
           id,
           userId,
           name: data.name,
           address: data.addr,
           introduce: data.introduction
         })
-        if (getRes.length === ids.length) result(getRes)
+        if (getRes.list.length === ids.length) result(getRes)
       })
     })
   })
@@ -39,8 +47,8 @@ function getPicture(ids: number[]) {
   return new Promise<IGetPictureRes>((result) => {
     const getRes: IGetPictureRes = []
     ids.forEach((id) => {
-      axios.get(getImgUrl(id), { headers }).then((res) => {
-        const data = res.data.data.slice(0, 2)
+      get(getImgUrl(id)).then((res) => {
+        const data = res.data.slice(0, 2)
         const aspect = data[0].imgs[0].urls
         const guestRoom = data[1].imgs[0].urls
         const imgUrls: string[] = [...aspect, ...guestRoom].map(
@@ -53,18 +61,20 @@ function getPicture(ids: number[]) {
   })
 }
 
-export async function getRoomData(userId: number, searchName: string) {
-  const listRes = await axios.get(getRoomListUrl(searchName), { headers })
-  const queryIds: number[] = listRes.data['query_ids'].map(
-    (item: any) => item.poiId
-  )
+export default async function getRoomData(
+  userId: number,
+  region: { name: string; url: string }
+) {
+  const { name, url } = region
 
-  const roomData = await getRoomDetails(userId, queryIds)
+  const searchRes = await get(url)
+  const queryIds: number[] = searchRes.query_ids.map((item: any) => item.poiId)
+
+  const roomData = await getRoomDetails(userId, name, queryIds)
   const pictureData = await getPicture(queryIds)
-
   pictureData.forEach((item) => {
-    const roomIndex = roomData.findIndex((room) => room.id == item.roomId)
-    roomData[roomIndex].pictureUrl = item.imgUrls
+    const roomIndex = roomData.list.findIndex((room) => room.id == item.roomId)
+    roomData.list[roomIndex].pictureUrl = item.imgUrls
   })
 
   return roomData

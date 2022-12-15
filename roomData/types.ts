@@ -4,11 +4,11 @@ export type IRoom = {
   name: string
   address: string
   introduce: string
-  pictureUrl: string[]
+  pictureUrl?: string[]
   typeTabIds?: number[]
 }
 
-export type IData = {
+export type IRoomData = {
   region: string
   list: IRoom[]
 }

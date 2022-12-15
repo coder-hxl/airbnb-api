@@ -5,9 +5,7 @@ import path from 'node:path'
 import pool from '@/app/database'
 import { APP_HOST, APP_PORT } from '@/app/config'
 
-import * as roomData from './roomData'
-
-import type { IData } from './types'
+import type { IRoomData } from './types'
 
 interface ICounter {
   name: string
@@ -41,6 +39,7 @@ function storeToDatabase(
       }
     })
 }
+
 const agent = new https.Agent({ keepAlive: true })
 function installImg(
   url: string,
@@ -73,7 +72,7 @@ function installImg(
   })
 
   getRes.on('error', async (err: any) => {
-    // console.log(getRes.reusedSocket, err.code)
+    console.log(getRes.reusedSocket, err.code)
     if (getRes.reusedSocket && err.code == 'ECONNRESET') {
       installImg(url, storePath, filename, roomId, counter)
     } else {
@@ -82,7 +81,7 @@ function installImg(
   })
 }
 
-async function imgHandle(data: IData) {
+export default function insertPictureData(data: IRoomData) {
   const { region, list } = data
   const counter: ICounter = {
     name: region,
@@ -103,7 +102,7 @@ async function imgHandle(data: IData) {
     isReq = true
     fs.mkdirSync(fileDir)
 
-    item.pictureUrl.forEach((url) => {
+    item.pictureUrl?.forEach((url) => {
       const time = new Date().getTime()
       const filename = `${time}r${id}.jpg`
       const path = `${fileDir}/${filename}`
@@ -115,10 +114,4 @@ async function imgHandle(data: IData) {
   if (!isReq) {
     console.log(`无需下载 ${region} 房间图片~`)
   }
-}
-
-const keys = Object.keys(roomData)
-for (const key of keys) {
-  const data = roomData as any
-  imgHandle(data[key])
 }
