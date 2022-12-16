@@ -7,3 +7,5 @@ export const USER_TABLE_CREATE = [
   'introduce',
   'avatarUrl'
 ]
+
+export const ROOM_PICTURE_NAME = 'room_picture'

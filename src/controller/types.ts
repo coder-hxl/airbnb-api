@@ -1,17 +1,16 @@
 import { DefaultState, DefaultContext } from 'koa'
 import { Middleware } from '@koa/router'
 
+interface IDefaultBody {
+  code: number
+  data: any
+}
+
 export type IControllerMiddleware<
   S = DefaultState,
-  C = DefaultContext
-> = Middleware<
-  S,
-  C,
-  {
-    code: number
-    data: any
-  }
->
+  C = DefaultContext,
+  D = IDefaultBody
+> = Middleware<S, C, D>
 
 interface IAuth extends Object {
   user: {
@@ -24,12 +23,6 @@ interface IAuth extends Object {
 
 export type IAuthMiddleware<
   S = DefaultState,
-  C extends IAuth = DefaultContext & IAuth
-> = Middleware<
-  S,
-  C,
-  {
-    code: number
-    data: any
-  }
->
+  C extends IAuth = DefaultContext & IAuth,
+  D = IDefaultBody
+> = Middleware<S, C, D>
