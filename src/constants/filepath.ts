@@ -1,9 +1,9 @@
 import path from 'path'
 
-export const GITHUB_MAP =
+export const GITHUB_REP =
   'https://raw.githubusercontent.com/coder-hxl/airbnb-upload/master'
 
-export const GITHUB_MAP_ROOM_PICTURE = GITHUB_MAP + '/room'
+export const GITHUB_ROOM_PICTURE = GITHUB_REP + '/room'
 
 export const UPLOAD_PATH = path.resolve(__dirname, '../../upload')
 

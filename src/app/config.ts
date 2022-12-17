@@ -18,5 +18,6 @@ export const {
   MYSQL_PORT,
   MYSQL_USER,
   MYSQL_PASSWORD,
-  MYSQL_DATABASE
+  MYSQL_DATABASE,
+  USE_GITHUB_REP
 } = process.env
