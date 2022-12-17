@@ -10,7 +10,7 @@ import { ROOM_PICTURE_PATH } from '@/constants/filepath'
 const roomController: IRoomController = {
   async picture(ctx) {
     const { roomId, filename } = ctx.params
-    const url = `${APP_HOST}:${APP_PORT}/api/${ROOM_PICTURE_NAME}/${roomId}/${filename}`
+    const url = `${APP_HOST}:${APP_PORT}/api/room/${roomId}/${ROOM_PICTURE_NAME}/${filename}`
 
     const results = await commonService.select(ROOM_PICTURE_NAME, { url })
 

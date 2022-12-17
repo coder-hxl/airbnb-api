@@ -21,7 +21,7 @@ function storeToDatabase(
   counter: ICounter
 ) {
   // 储存到数据库
-  const url = `${APP_HOST}:${APP_PORT}/api/room_picture/${roomId}/${filename}`
+  const url = `${APP_HOST}:${APP_PORT}/api/room/${roomId}/room_picture/${filename}`
   const statement = `INSERT INTO room_picture (url, filename, mimetype, size, roomId) VALUES (?, ?, ?, ?, ?);`
 
   pool

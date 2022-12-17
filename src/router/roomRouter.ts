@@ -2,8 +2,8 @@ import Router from '@koa/router'
 
 import roomController from '@/controller/room/index'
 
-const roomRouter = new Router()
+const roomRouter = new Router({ prefix: '/room' })
 
-roomRouter.get('/room_picture/:roomId/:filename', roomController.picture)
+roomRouter.get('/:roomId/room_picture/:filename', roomController.picture)
 
 export default roomRouter
