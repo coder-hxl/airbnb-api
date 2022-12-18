@@ -11,7 +11,7 @@
  Target Server Version : 80029
  File Encoding         : 65001
 
- Date: 17/12/2022 14:05:59
+ Date: 18/12/2022 19:44:24
 */
 
 SET NAMES utf8mb4;
@@ -23,15 +23,15 @@ SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `r_room_room_type_tab`;
 CREATE TABLE `r_room_room_type_tab`  (
   `id` int NOT NULL AUTO_INCREMENT,
-  `roomId` int NOT NULL,
-  `roomTypeTabId` int NOT NULL,
-  `createAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updateAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `room_id` int NOT NULL,
+  `room_type_tab_id` int NOT NULL,
+  `create_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `roomId`(`roomId`) USING BTREE,
-  INDEX `verifyTabId`(`roomTypeTabId`) USING BTREE,
-  CONSTRAINT `r_room_room_type_tab_ibfk_1` FOREIGN KEY (`roomId`) REFERENCES `room` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `r_room_room_type_tab_ibfk_2` FOREIGN KEY (`roomTypeTabId`) REFERENCES `room_type_tab` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  INDEX `roomId`(`room_id`) USING BTREE,
+  INDEX `verifyTabId`(`room_type_tab_id`) USING BTREE,
+  CONSTRAINT `r_room_room_type_tab_ibfk_1` FOREIGN KEY (`room_id`) REFERENCES `room` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `r_room_room_type_tab_ibfk_2` FOREIGN KEY (`room_type_tab_id`) REFERENCES `room_type_tab` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB AUTO_INCREMENT = 740 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
@@ -245,14 +245,14 @@ DROP TABLE IF EXISTS `region`;
 CREATE TABLE `region`  (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `parentId` int NULL DEFAULT NULL,
-  `createAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updateAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `parent_id` int NULL DEFAULT NULL,
+  `create_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `type` int NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `name`(`name`) USING BTREE,
-  INDEX `parentId`(`parentId`) USING BTREE,
-  CONSTRAINT `region_ibfk_1` FOREIGN KEY (`parentId`) REFERENCES `region` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  INDEX `parentId`(`parent_id`) USING BTREE,
+  CONSTRAINT `region_ibfk_1` FOREIGN KEY (`parent_id`) REFERENCES `region` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
@@ -283,17 +283,17 @@ INSERT INTO `region` VALUES (19, '百利广场', 4, '2022-12-10 14:33:23', '2022
 DROP TABLE IF EXISTS `review`;
 CREATE TABLE `review`  (
   `id` int NOT NULL AUTO_INCREMENT,
-  `starRating` int NOT NULL,
+  `star_rating` int NOT NULL,
   `comment` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `userId` int NOT NULL,
-  `roomId` int NOT NULL,
-  `createAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updateAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `user_id` int NOT NULL,
+  `room_id` int NOT NULL,
+  `create_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `userId`(`userId`) USING BTREE,
-  INDEX `roomId`(`roomId`) USING BTREE,
-  CONSTRAINT `review_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `review_ibfk_2` FOREIGN KEY (`roomId`) REFERENCES `room` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  INDEX `userId`(`user_id`) USING BTREE,
+  INDEX `roomId`(`room_id`) USING BTREE,
+  CONSTRAINT `review_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `review_ibfk_2` FOREIGN KEY (`room_id`) REFERENCES `room` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
@@ -308,16 +308,16 @@ CREATE TABLE `room`  (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `introduce` varchar(800) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
-  `userId` int NOT NULL,
-  `regionId` int NOT NULL,
-  `createAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updateAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `user_id` int NOT NULL,
+  `region_id` int NOT NULL,
+  `create_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `userId`(`userId`) USING BTREE,
-  INDEX `regionId`(`regionId`) USING BTREE,
-  CONSTRAINT `room_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `room_ibfk_2` FOREIGN KEY (`regionId`) REFERENCES `region` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  INDEX `userId`(`user_id`) USING BTREE,
+  INDEX `regionId`(`region_id`) USING BTREE,
+  CONSTRAINT `room_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `room_ibfk_2` FOREIGN KEY (`region_id`) REFERENCES `region` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1990226268 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
@@ -535,12 +535,12 @@ CREATE TABLE `room_picture`  (
   `filename` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `mimetype` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `size` bigint NOT NULL,
-  `roomId` int NOT NULL,
-  `createAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updateAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `room_id` int NOT NULL,
+  `create_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `roomId`(`roomId`) USING BTREE,
-  CONSTRAINT `room_picture_ibfk_1` FOREIGN KEY (`roomId`) REFERENCES `room` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  INDEX `roomId`(`room_id`) USING BTREE,
+  CONSTRAINT `room_picture_ibfk_1` FOREIGN KEY (`room_id`) REFERENCES `room` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB AUTO_INCREMENT = 19600 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
@@ -4079,8 +4079,8 @@ DROP TABLE IF EXISTS `room_type_tab`;
 CREATE TABLE `room_type_tab`  (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `createAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updateAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `create_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `name`(`name`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
@@ -4103,9 +4103,9 @@ CREATE TABLE `user`  (
   `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `cellphone` bigint NOT NULL,
   `introduce` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
-  `avatarUrl` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
-  `createAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updateAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `avatar_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `create_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `name`(`name`) USING BTREE,
   UNIQUE INDEX `cellphone`(`cellphone`) USING BTREE

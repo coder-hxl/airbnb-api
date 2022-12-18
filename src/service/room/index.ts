@@ -6,12 +6,12 @@ const roomService: IRoomService = {
   async detail(roomId) {
     const statement = `
       SELECT
-      	r.id, r.name, r.introduce, r.createAt, r.updateAt,
+      	r.id, r.name, r.introduce, r.create_at createAt, r.update_at updateAt,
       	JSON_ARRAYAGG(rp.url) pictureUrls,
-      	JSON_OBJECT('id', u.id, 'name', u.name, 'avatarUrl', u.avatarUrl)   landlord
+      	JSON_OBJECT('id', u.id, 'name', u.name, 'avatarUrl', u.avatar_url)   landlord
       FROM room r
-      LEFT JOIN room_picture rp ON rp.roomId = r.id
-      LEFT JOIN user u ON u.id = r.userId
+      LEFT JOIN room_picture rp ON rp.room_id = r.id
+      LEFT JOIN user u ON u.id = r.user_id
       WHERE r.id = ?;
     `
 
