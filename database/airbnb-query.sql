@@ -135,6 +135,11 @@ ALTER TABLE r_room_room_type_tab RENAME COLUMN roomId TO room_id;
 ALTER TABLE r_room_room_type_tab RENAME COLUMN roomTypeTabId TO room_type_tab_id;
 
 -- review
+INSERT INTO review (star_rating, comment, user_id, room_id) VALUES
+	(5, '房间非常好，床睡得舒服， 干净又卫生，设备齐全', 1, 62136475),
+	(5, '位置非常好，服务很好，周边还有好吃好玩的', 1, 62136475),
+	(5, '环境优美，住得很舒服，位置好', 1, 166746036),
+	(5, '环境优美，住得很舒服，位置好', 2, 62136475);
 ALTER TABLE review RENAME COLUMN createAt TO create_at;
 ALTER TABLE review RENAME COLUMN updateAt TO update_at;
 ALTER TABLE review RENAME COLUMN starRating TO star_rating;
@@ -152,51 +157,46 @@ ALTER TABLE room_picture RENAME COLUMN roomId TO room_id;
 -- query
 SELECT
   r.id, r.name, r.introduce, r.create_at createAt, r.update_at updateAt,
- 	JSON_ARRAYAGG(rp.url) pictureUrls,
  	JSON_OBJECT('id', u.id, 'name', u.name, 'avatarUrl', u.avatar_url) landlord,
-  JSON_ARRAYAGG(rtt.name) message
+	JSON_ARRAYAGG(rp.url) pictureUrls,
+  JSON_ARRAYAGG(rt.name) typeTab,
+	JSON_ARRAYAGG(JSON_OBJECT(
+		'id', re.id, 'starRating', re.star_rating,
+		'comment', re.comment, 'createAt', re.create_at,
+		'user', JSON_OBJECT('id', reu.id, 'name', reu.name, 'avatarUrl', reu.avatar_url)
+	)) reviews
 FROM room r
-LEFT JOIN room_picture rp ON r.id = rp.room_id
 LEFT JOIN user u ON u.id = r.user_id
+LEFT JOIN room_picture rp ON r.id = rp.room_id
 LEFT JOIN r_room_room_type_tab rrt ON r.id = rrt.room_id
-LEFT JOIN room_type_tab rtt ON rrt.room_type_tab_id = rtt.id
+LEFT JOIN room_type_tab rt ON rrt.room_type_tab_id = rt.id
+LEFT JOIN review re ON r.id = re.room_id
+LEFT JOIN user reu ON reu.id = re.user_id
 WHERE r.id = 62136475
 GROUP BY r.id;
 
--- 80823792
+
 
 SELECT
-  r.id, r.name, r.introduce, r.create_at createAt, r.update_at updateAt,
- 	JSON_ARRAYAGG(rp.url) pictureUrls,
---  	JSON_OBJECT('id', u.id, 'name', u.name, 'avatarUrl', u.avatar_url) landlord,
-  JSON_ARRAYAGG(rtt.name) message
+	r.id, r.name, r.introduce, r.address,
+	JSON_OBJECT('id', u.id, 'name', u.name, 'avatarUel', u.avatar_url) landlord
 FROM room r
-LEFT JOIN
-	(room_picture rp, user u, r_room_room_type_tab rrt, room_type_tab rtt)
-	ON
-	(rp.room_id = r.id AND u.id = r.user_id AND r.id = rrt.room_id AND rrt.room_type_tab_id = rtt.id)
-WHERE r.id = 62136475
-GROUP BY r.id;
+LEFT JOIN user u ON r.user_id = u.id
+WHERE r.id = 62136475;
 
-SELECT * FROM r_room_room_type_tab r WHERE r.room_id = 62136475;
+SELECT JSON_ARRAYAGG(url) pictureUrls FROM room_picture WHERE room_id = 62136475;
 
+SELECT JSON_ARRAYAGG(rt.name) typeTabs FROM r_room_room_type_tab rrt
+LEFT JOIN room_type_tab rt ON rt.id = rrt.room_type_tab_id
+WHERE rrt.room_id = 62136475;
 
-
-SELECT
-	r.id, r.name,
-	JSON_ARRAYAGG(
-		JSON_OBJECT(
-			'id', ro.id, 'name', ro.name, 'pictures',
-			(SELECT JSON_ARRAYAGG(rp.url) FROM room_picture rp WHERE rp.room_id = ro.id)
-		)
-	) rooms
-FROM region r
-LEFT JOIN room ro ON ro.region_id = r.id
-WHERE r.parent_id = 4
-GROUP BY r.id;
-
-
-
+SELECT JSON_ARRAYAGG(
+	JSON_OBJECT('id', r.id, 'star_rating', r.star_rating, 'comment', r.comment, 'createAt', r.create_at,
+	'user', JSON_OBJECT('id', u.id, 'name', u.name, 'avatar_url', u.avatar_url))
+) reviews
+FROM review r
+LEFT JOIN user u ON r.user_id = u.id
+WHERE room_id = 62136475;
 
 
 

@@ -19,7 +19,7 @@ const roomController: IRoomController = {
     // 是否使用 github 图床, 默认使用
     if (USE_GITHUB_REP == 'true') {
       const { id } = data
-      data.pictureUrls = data.pictureUrls.map((url) => {
+      data.pictureUrls = data.pictureUrls?.map((url) => {
         const filename = url.split('/room_picture/')[1]
         return `${GITHUB_ROOM_PICTURE}/${id}/${filename}`
       })
