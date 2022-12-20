@@ -120,6 +120,7 @@ ALTER TABLE room RENAME COLUMN createAt TO create_at;
 ALTER TABLE room RENAME COLUMN updateAt TO update_at;
 ALTER TABLE room RENAME COLUMN userId TO user_id;
 ALTER TABLE room RENAME COLUMN regionId TO region_id;
+ALTER TABLE room ADD COLUMN price INT NOT NULL;
 
 -- room_type_tab
 -- INSERT INTO room_type_tab (name) VALUES ('公寓');
@@ -145,6 +146,7 @@ ALTER TABLE review RENAME COLUMN updateAt TO update_at;
 ALTER TABLE review RENAME COLUMN starRating TO star_rating;
 ALTER TABLE review RENAME COLUMN userId TO user_id;
 ALTER TABLE review RENAME COLUMN roomId TO room_id;
+ALTER TABLE review MODIFY star_rating DECIMAL(2, 1) NOT NULL;
 
 -- room_picture
 ALTER TABLE room_picture RENAME COLUMN createAt TO create_at;
@@ -178,25 +180,37 @@ GROUP BY r.id;
 
 
 SELECT
-	r.id, r.name, r.introduce, r.address,
+	r.id, r.name, r.introduce, r.address, r.price,
 	JSON_OBJECT('id', u.id, 'name', u.name, 'avatarUel', u.avatar_url) landlord
 FROM room r
 LEFT JOIN user u ON r.user_id = u.id
-WHERE r.id = 62136475;
+WHERE r.region_id = 13;
 
 SELECT JSON_ARRAYAGG(url) pictureUrls FROM room_picture WHERE room_id = 62136475;
 
-SELECT JSON_ARRAYAGG(rt.name) typeTabs FROM r_room_room_type_tab rrt
+SELECT JSON_ARRAYAGG(rt.name) typeTabs
+FROM r_room_room_type_tab rrt
 LEFT JOIN room_type_tab rt ON rt.id = rrt.room_type_tab_id
 WHERE rrt.room_id = 62136475;
 
-SELECT JSON_ARRAYAGG(
-	JSON_OBJECT('id', r.id, 'star_rating', r.star_rating, 'comment', r.comment, 'createAt', r.create_at,
-	'user', JSON_OBJECT('id', u.id, 'name', u.name, 'avatar_url', u.avatar_url))
-) reviews
+SELECT
+	ROUND(AVG(r.star_rating), 1) starRating, COUNT(*) reviewsCount,
+	JSON_ARRAYAGG(
+		JSON_OBJECT('id', r.id, 'star_rating', r.star_rating,
+			'comment', r.comment, 'createAt', r.create_at,
+			'user', JSON_OBJECT('id', u.id, 'name', u.name, 'avatar_url', u.avatar_url))
+	) reviews
 FROM review r
 LEFT JOIN user u ON r.user_id = u.id
 WHERE room_id = 62136475;
+
+
+
+
+
+
+
+
 
 
 
