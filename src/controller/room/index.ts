@@ -5,8 +5,7 @@ import roomService from '@/service/room'
 
 import { APP_HOST, APP_PORT } from '@/app/config'
 import { ROOM_PICTURE_NAME } from '@/constants/table'
-import { ROOM_PICTURE_PATH, GITHUB_ROOM_PICTURE } from '@/constants/filepath'
-import { USE_GITHUB_REP } from '@/app/config'
+import { ROOM_PICTURE_PATH } from '@/constants/filepath'
 
 import type IRoomController from './types'
 
@@ -15,15 +14,6 @@ const roomController: IRoomController = {
     const { roomId } = ctx.params
 
     const data = await roomService.detail(roomId)
-
-    // 是否使用 github 图床, 默认使用
-    if (USE_GITHUB_REP == 'true') {
-      const { id } = data
-      data.pictureUrls = data.pictureUrls?.map((url) => {
-        const filename = url.split('/room_picture/')[1]
-        return `${GITHUB_ROOM_PICTURE}/${id}/${filename}`
-      })
-    }
 
     ctx.body = { code: 200, data }
   },
