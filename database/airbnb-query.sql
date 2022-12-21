@@ -204,23 +204,15 @@ FROM review r
 LEFT JOIN user u ON r.user_id = u.id
 WHERE room_id = 62136475;
 
+ALTER TABLE area DROP COLUMN area_code, DROP COLUMN zip_code, DROP COLUMN city_code;
 
 
 
+SELECT * FROM area WHERE name = '阳江市';
 
+SELECT * FROM  WHERE deep = 2;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+SELECT id, deep, name, ext_path FROM
+WHERE ST_Intersects(polygon, ST_GeomFromText('POINT(112.003407 21.873388)',0))=1;
 
 
