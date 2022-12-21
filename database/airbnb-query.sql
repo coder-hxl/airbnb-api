@@ -121,6 +121,7 @@ ALTER TABLE room RENAME COLUMN updateAt TO update_at;
 ALTER TABLE room RENAME COLUMN userId TO user_id;
 ALTER TABLE room RENAME COLUMN regionId TO region_id;
 ALTER TABLE room ADD COLUMN price INT NOT NULL;
+ALTER TABLE room ADD COLUMN geo GEOMETRY;
 
 -- room_type_tab
 -- INSERT INTO room_type_tab (name) VALUES ('公寓');
@@ -204,15 +205,28 @@ FROM review r
 LEFT JOIN user u ON r.user_id = u.id
 WHERE room_id = 62136475;
 
-ALTER TABLE area DROP COLUMN area_code, DROP COLUMN zip_code, DROP COLUMN city_code;
+
+
+-- POINT(111.947966 21.612355)
+-- POINT(111.94866 21.61243)
+-- 通过房间经纬度找地区
+SELECT id, deep, name, ext_path FROM area
+WHERE ST_Intersects(polygon, ST_GeomFromText('POINT(111.947966 21.612355)',0))=1;
+
+-- 通过地区经纬度找房间
+select * from room where ST_Intersects((select polygon from area where name='江城区'), geo)=1;
 
 
 
-SELECT * FROM area WHERE name = '阳江市';
 
-SELECT * FROM  WHERE deep = 2;
 
-SELECT id, deep, name, ext_path FROM
-WHERE ST_Intersects(polygon, ST_GeomFromText('POINT(112.003407 21.873388)',0))=1;
+
+
+
+
+
+
+
+
 
 
