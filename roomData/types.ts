@@ -1,11 +1,17 @@
 export type IRoom = {
   id: number
-  userId: number
   name: string
+  introduction: string
   address: string
-  introduce: string
+  areaName: string
+  price: number
+  type: string
+  coverUrl?: string
+  geo: string
+  userId: number
+
   pictureUrl?: string[]
-  typeTabIds?: number[]
+  roomBedTypeId?: number[]
 }
 
 export type IRoomData = {

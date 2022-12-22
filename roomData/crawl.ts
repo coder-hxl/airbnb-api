@@ -1,5 +1,7 @@
 import https from 'node:https'
 import URL from 'node:url'
+import fs from 'node:fs'
+import path from 'node:path'
 
 import { headers, getRoomDetailUrl, getImgUrl } from './config'
 
@@ -8,6 +10,11 @@ import type { IRoomData } from './types'
 type IGetPictureRes = {
   roomId: number
   imgUrls: string[]
+}[]
+
+type ISearchMap = {
+  id: number
+  price: number
 }[]
 
 function get<T = any>(url: string) {
@@ -24,38 +31,51 @@ function get<T = any>(url: string) {
   })
 }
 
-function getRoomDetails(userId: number, searchName: string, ids: number[]) {
+function getRoomDetails(
+  userId: number,
+  searchName: string,
+  searchMap: ISearchMap
+) {
   return new Promise<IRoomData>((result) => {
     const getRes: IRoomData = { region: searchName, list: [] }
-    ids.forEach((id) => {
+    searchMap.forEach((item) => {
+      const { id, price } = item
       get(getRoomDetailUrl(id)).then((res) => {
-        const data = res.data[0]
+        const { name, introduction, addr, areaName, hotelType, lng, lat } =
+          res.data[0]
+
         getRes.list.push({
           id,
-          userId,
-          name: data.name,
-          address: data.addr,
-          introduce: data.introduction
+          name,
+          introduction,
+          address: addr,
+          areaName,
+          price,
+          type: hotelType,
+          geo: `ST_GeomFromText('POINT(${lng} ${lat})', 0)`,
+          userId
         })
-        if (getRes.list.length === ids.length) result(getRes)
+        if (getRes.list.length === searchMap.length) result(getRes)
       })
     })
   })
 }
 
-function getPicture(ids: number[]) {
+function getPicture(searchMap: ISearchMap) {
   return new Promise<IGetPictureRes>((result) => {
     const getRes: IGetPictureRes = []
-    ids.forEach((id) => {
+
+    searchMap.forEach((item) => {
+      const { id } = item
       get(getImgUrl(id)).then((res) => {
         const data = res.data.slice(0, 2)
-        const aspect = data[0].imgs[0].urls
-        const guestRoom = data[1].imgs[0].urls
+        const aspect = data[0]?.imgs[0].urls || []
+        const guestRoom = data[1]?.imgs[0].urls || []
         const imgUrls: string[] = [...aspect, ...guestRoom].map(
           (item: string) => item.replace('/w.h', '')
         )
         getRes.push({ roomId: id, imgUrls })
-        if (getRes.length === ids.length) result(getRes)
+        if (getRes.length === searchMap.length) result(getRes)
       })
     })
   })
@@ -63,19 +83,35 @@ function getPicture(ids: number[]) {
 
 export default async function getRoomData(
   userId: number,
-  region: { name: string; url: string }
+  region: { name: string; url: string; filename: string }
 ) {
-  const { name, url } = region
+  const { name, filename, url } = region
 
   const searchRes = await get(url)
-  const queryIds: number[] = searchRes.query_ids.map((item: any) => item.poiId)
+  const searchMap: ISearchMap = searchRes.data.searchresult.map(
+    (item: any) => ({
+      id: item.poiid,
+      price: item.lowestPrice
+    })
+  )
 
-  const roomData = await getRoomDetails(userId, name, queryIds)
-  const pictureData = await getPicture(queryIds)
+  const roomData = await getRoomDetails(userId, name, searchMap)
+  const pictureData = await getPicture(searchMap)
   pictureData.forEach((item) => {
     const roomIndex = roomData.list.findIndex((room) => room.id == item.roomId)
     roomData.list[roomIndex].pictureUrl = item.imgUrls
   })
+
+  // 缓存一份
+  fs.writeFile(
+    path.resolve(__dirname, `./data/${filename}.json`),
+    JSON.stringify(roomData),
+    (err) => {
+      if (err) console.log('err: ', err.message)
+
+      console.log(`${name} 数据成功, 房间总数: ${roomData.list.length}`)
+    }
+  )
 
   return roomData
 }

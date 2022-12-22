@@ -14,6 +14,7 @@ interface ICounter {
   discardSum: number
 }
 
+const notCoverIds: { id: number; hasCouver: boolean }[] = []
 function storeToDatabase(
   filename: string,
   roomId: number,
@@ -22,7 +23,17 @@ function storeToDatabase(
 ) {
   // 储存到数据库
   const url = `${APP_HOST}:${APP_PORT}/api/room/${roomId}/room_picture/${filename}`
-  const statement = `INSERT INTO room_picture (url, filename, mimetype, size, roomId) VALUES (?, ?, ?, ?, ?);`
+
+  notCoverIds.forEach((item) => {
+    if (item.id == roomId && !item.hasCouver) {
+      item.hasCouver = true
+
+      const roomStatment = `UPDATE room SET cover_url = ? WHERE id = ?;`
+      pool.execute(roomStatment, [url, roomId])
+    }
+  })
+
+  const statement = `INSERT INTO room_picture (url, filename, mimetype, size, room_id) VALUES (?, ?, ?, ?, ?);`
 
   pool
     .execute(statement, [url, filename, 'image/jpeg', fileSize, roomId])
@@ -81,7 +92,7 @@ function installImg(
   })
 }
 
-export default function insertPictureData(data: IRoomData) {
+export default async function insertPictureData(data: IRoomData) {
   const { region, list } = data
   const counter: ICounter = {
     name: region,
@@ -92,6 +103,15 @@ export default function insertPictureData(data: IRoomData) {
   let isReq = false
 
   console.log(`开始下载 ${region} 房间图片~`)
+
+  const roomRes = await pool.execute('SELECT * FROM room;')
+  const rooms = roomRes[0] as any[]
+  rooms.forEach((item) => {
+    notCoverIds.push({
+      id: item.id,
+      hasCouver: !!item.cover_url
+    })
+  })
 
   list.forEach((item) => {
     const { id } = item
