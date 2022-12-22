@@ -15,60 +15,52 @@ CREATE TABLE IF NOT EXISTS `user`(
 	updateAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS `region`(
-	id INT PRIMARY KEY AUTO_INCREMENT,
-	name VARCHAR(255) NOT NULL UNIQUE,
-	type INT NOT NULL,
-	parentId INT,
-	createAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	updateAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-
-	FOREIGN KEY (parentId) REFERENCES region(id) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
 CREATE TABLE IF NOT EXISTS `room`(
 	id INT PRIMARY KEY AUTO_INCREMENT,
 	name VARCHAR(50) NOT NULL,
+	introduction VARCHAR(800),
 	address VARCHAR(255) NOT NULL,
-	introduce VARCHAR(800),
-	userId INT NOT NULL,
-	regionId INT NOT NULL,
-	createAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	updateAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-
-	FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (regionId) REFERENCES region(id) ON DELETE CASCADE ON UPDATE CASCADE
+	area_name VARCHAR(100) NOT NULL,
+	price INT NOT NULL,
+	type VARCHAR(10) NOT NULL,
+	cover_url VARCHAR(255),
+	geo GEOMETRY NOT NULL,
+	user_id INT NOT NULL,
+	create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	
+	FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS `room_type_tab`(
+CREATE TABLE IF NOT EXISTS `room_bed_type`(
 	id INT PRIMARY KEY AUTO_INCREMENT,
 	name VARCHAR(10) NOT NULL UNIQUE,
-	createAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	updateAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+	create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS `r_room_room_type_tab`(
+CREATE TABLE IF NOT EXISTS `room_room_bed_type`(
 	id INT PRIMARY KEY AUTO_INCREMENT,
-	roomId INT NOT NULL,
-	roomTypeTabId INT NOT NULL,
-	createAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	updateAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-
-	FOREIGN KEY (roomId) REFERENCES room(id) ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (verifyTabId) REFERENCES verify_tab(id) ON DELETE CASCADE ON UPDATE CASCADE
+	room_id INT NOT NULL,
+	bed_id INT NOT NULL,
+	create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	
+	FOREIGN KEY (room_id) REFERENCES room(id) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (bed_id) REFERENCES room_bed_type(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS `review`(
+CREATE TABLE IF NOT EXISTS `room_review`(
 	id INT PRIMARY KEY AUTO_INCREMENT,
-	starRating INT NOT NULL,
+	star_rating DECIMAL(2, 1) NOT NULL,
 	comment VARCHAR(255) NOT NULL,
-	userId INT NOT NULL,
-	roomId INT NOT NULL,
-	createAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	updateAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-
-	FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (roomId) REFERENCES room(id) ON DELETE CASCADE ON UPDATE CASCADE
+	user_id INT NOT NULL,
+	room_id INT NOT NULL,
+	create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	
+	FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (room_id) REFERENCES room(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS `room_picture`(
@@ -77,11 +69,11 @@ CREATE TABLE IF NOT EXISTS `room_picture`(
 	filename VARCHAR(255) NOT NULL,
 	mimetype VARCHAR(100) NOT NULL,
 	size BIGINT NOT NULL,
-	roomId INT NOT NULL,
-	createAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	updateAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-
-	FOREIGN KEY (roomId) REFERENCES room(id) ON DELETE CASCADE ON UPDATE CASCADE
+	room_id INT NOT NULL,
+	create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	
+	FOREIGN KEY (room_id) REFERENCES room(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
@@ -92,80 +84,40 @@ ALTER TABLE user RENAME COLUMN avatarUrl TO avatar_url;
 ALTER TABLE user RENAME COLUMN createAt TO create_at;
 ALTER TABLE user RENAME COLUMN updateAt TO update_at;
 
--- region
--- INSERT INTO region (name, type) VALUES ('中国', 1);
--- INSERT INTO region (name, type, parentId) VALUES ('广东', 2, 1);
--- INSERT INTO region (name, type, parentId) VALUES ('阳江', 3, 2);
--- INSERT INTO region (name, type, parentId) VALUES ('海陵岛', 4, 4);
--- INSERT INTO region (name, type, parentId) VALUES ('敏捷黄金海岸', 4, 4);
--- INSERT INTO region (name, type, parentId) VALUES ('十里银滩', 4, 4);
--- INSERT INTO region (name, type, parentId) VALUES ('北洛秘境', 4, 4);
--- INSERT INTO region (name, type, parentId) VALUES ('月亮湾', 4, 4);
--- INSERT INTO region (name, type, parentId) VALUES ('沙扒湾', 4, 4);
--- INSERT INTO region (name, type, parentId) VALUES ('百利广场', 4, 4);
--- INSERT INTO region (name, type, parentId) VALUES ('广州', 3, 2);
--- INSERT INTO region (name, type, parentId) VALUES ('佛山', 3, 2);
--- INSERT INTO region (name, type, parentId) VALUES ('台湾', 2, 1);
--- INSERT INTO region (name, type, parentId) VALUES ('台北', 3, 7);
--- INSERT INTO region (name, type, parentId) VALUES ('新北', 3, 7);
--- INSERT INTO region (name, type, parentId) VALUES ('湖南', 2, 1);
--- INSERT INTO region (name, type, parentId) VALUES ('长沙', 3, 10);
--- INSERT INTO region (name, type, parentId) VALUES ('永州', 3, 10);
-ALTER TABLE region RENAME COLUMN parentId TO parent_id;
-ALTER TABLE region RENAME COLUMN createAt TO create_at;
-ALTER TABLE region RENAME COLUMN updateAt TO update_at;
+-- -- room
+-- INSERT INTO room (name, introduction, address, area_name, price, type, geo, user_id)
+-- VALUES ('test', 'test', 'test', 'test', 100, 'test', ST_GeomFromText('POINT(111.88955 21.590996)', 0), 1);
+ALTER TABLE room MODIFY introduction VARCHAR(10000);
 
--- room
-ALTER TABLE room RENAME COLUMN createAt TO create_at;
-ALTER TABLE room RENAME COLUMN updateAt TO update_at;
-ALTER TABLE room RENAME COLUMN userId TO user_id;
-ALTER TABLE room RENAME COLUMN regionId TO region_id;
-ALTER TABLE room ADD COLUMN price INT NOT NULL;
-ALTER TABLE room ADD COLUMN geo GEOMETRY;
+-- room_bed_type
+INSERT INTO room_bed_type (name) 
+VALUES ('单人房'), ('双床房'), ('三人间'), ('大床房'), ('床位');
 
--- room_type_tab
--- INSERT INTO room_type_tab (name) VALUES ('公寓');
--- INSERT INTO room_type_tab (name) VALUES ('酒店');
--- INSERT INTO room_type_tab (name) VALUES ('别墅');
-ALTER TABLE room_type_tab RENAME COLUMN createAt TO create_at;
-ALTER TABLE room_type_tab RENAME COLUMN updateAt TO update_at;
 
 -- r_room_room_type_tab
-ALTER TABLE r_room_room_type_tab RENAME COLUMN createAt TO create_at;
-ALTER TABLE r_room_room_type_tab RENAME COLUMN updateAt TO update_at;
-ALTER TABLE r_room_room_type_tab RENAME COLUMN roomId TO room_id;
-ALTER TABLE r_room_room_type_tab RENAME COLUMN roomTypeTabId TO room_type_tab_id;
 
 -- review
-INSERT INTO review (star_rating, comment, user_id, room_id) VALUES
-	(5, '房间非常好，床睡得舒服， 干净又卫生，设备齐全', 1, 62136475),
+INSERT INTO review (star_rating, comment, user_id, room_id) VALUES 
+	(5, '房间非常好，床睡得舒服， 干净又卫生，设备齐全', 1, 62136475), 
 	(5, '位置非常好，服务很好，周边还有好吃好玩的', 1, 62136475),
 	(5, '环境优美，住得很舒服，位置好', 1, 166746036),
 	(5, '环境优美，住得很舒服，位置好', 2, 62136475);
-ALTER TABLE review RENAME COLUMN createAt TO create_at;
-ALTER TABLE review RENAME COLUMN updateAt TO update_at;
-ALTER TABLE review RENAME COLUMN starRating TO star_rating;
-ALTER TABLE review RENAME COLUMN userId TO user_id;
-ALTER TABLE review RENAME COLUMN roomId TO room_id;
-ALTER TABLE review MODIFY star_rating DECIMAL(2, 1) NOT NULL;
 
 -- room_picture
-ALTER TABLE room_picture RENAME COLUMN createAt TO create_at;
-ALTER TABLE room_picture RENAME COLUMN updateAt TO update_at;
-ALTER TABLE room_picture RENAME COLUMN roomId TO room_id;
+
 
 
 
 
 -- query
-SELECT
+SELECT 
   r.id, r.name, r.introduce, r.create_at createAt, r.update_at updateAt,
  	JSON_OBJECT('id', u.id, 'name', u.name, 'avatarUrl', u.avatar_url) landlord,
 	JSON_ARRAYAGG(rp.url) pictureUrls,
   JSON_ARRAYAGG(rt.name) typeTab,
 	JSON_ARRAYAGG(JSON_OBJECT(
-		'id', re.id, 'starRating', re.star_rating,
-		'comment', re.comment, 'createAt', re.create_at,
+		'id', re.id, 'starRating', re.star_rating, 
+		'comment', re.comment, 'createAt', re.create_at, 
 		'user', JSON_OBJECT('id', reu.id, 'name', reu.name, 'avatarUrl', reu.avatar_url)
 	)) reviews
 FROM room r
@@ -189,7 +141,7 @@ WHERE r.region_id = 13;
 
 SELECT JSON_ARRAYAGG(url) pictureUrls FROM room_picture WHERE room_id = 62136475;
 
-SELECT JSON_ARRAYAGG(rt.name) typeTabs
+SELECT JSON_ARRAYAGG(rt.name) typeTabs 
 FROM r_room_room_type_tab rrt
 LEFT JOIN room_type_tab rt ON rt.id = rrt.room_type_tab_id
 WHERE rrt.room_id = 62136475;
@@ -197,7 +149,7 @@ WHERE rrt.room_id = 62136475;
 SELECT
 	ROUND(AVG(r.star_rating), 1) starRating, COUNT(*) reviewsCount,
 	JSON_ARRAYAGG(
-		JSON_OBJECT('id', r.id, 'star_rating', r.star_rating,
+		JSON_OBJECT('id', r.id, 'star_rating', r.star_rating, 
 			'comment', r.comment, 'createAt', r.create_at,
 			'user', JSON_OBJECT('id', u.id, 'name', u.name, 'avatar_url', u.avatar_url))
 	) reviews
@@ -214,12 +166,13 @@ SELECT id, deep, name, ext_path FROM area
 WHERE ST_Intersects(polygon, ST_GeomFromText('POINT(111.947966 21.612355)',0))=1;
 
 -- 通过地区经纬度找房间
-select * from room where ST_Intersects((select polygon from area where name='江城区'), geo)=1;
+SELECT * FROM room WHERE ST_Intersects((SELECT polygon FROM area WHERE name='阳江市'), geo)=1;
 
 
+SELECT id, name, ext_path FROM area WHERE ext_path LIKE '%广州%' AND deep = 2;
 
 
-
+UPDATE room SET cover_url = '1' WHERE id = 6311787;
 
 
 
