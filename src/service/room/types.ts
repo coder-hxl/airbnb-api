@@ -1,18 +1,22 @@
 export interface IDetailStatement {
   rootStatement: string
   pictureUrlStatement: string
-  typeTabStatement: string
+  bedTypeStatement: string
   reviewStatement: string
   [key: string]: string
 }
 
-export interface IDetailQueryRes extends Object {
+export interface IDetailCommonRes extends Object {
   id: number
   name: string
-  introduce: string
+  introduction: string
   address: string
+  areaName: string
+  areaExtPath: string
   price: number
-  starRating: string
+  type: string
+  coverUrl: string
+  starRating: string | null
   reviewsCount: number
   reviews:
     | {
@@ -26,8 +30,8 @@ export interface IDetailQueryRes extends Object {
         }
       }[]
     | null
-  pictureUrls: string[] | null
-  typeTabs: string[]
+  pictureUrls: string[]
+  bedTypes: string[]
   landlord: {
     id: number
     name: string
@@ -35,12 +39,17 @@ export interface IDetailQueryRes extends Object {
   }
 }
 
-export interface IDetailRes extends IDetailQueryRes {
-  info: {
-    content: string
-    contentColor: string
-    fontSize: string
-  } | null
+export interface IDetailQueryRes extends IDetailCommonRes {
+  geo: {
+    x: number
+    y: number
+  }
+}
+
+export interface IDetailRes extends IDetailCommonRes {
+  lng: number
+  lat: number
+  scoreDesc: string | null
 }
 
 export default interface IRoomService {
