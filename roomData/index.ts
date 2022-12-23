@@ -8,7 +8,7 @@ import { regionURLMap } from './config'
 
 // regionURLMap.forEach((item, index) => {
 //   // 限制处理
-//   if (index !== 5) return
+//   if (index !== 2) return
 
 //   getRoomData(1, item).then((res) =>
 //     insertRoomData(res).then(() => insertPictureData(res))

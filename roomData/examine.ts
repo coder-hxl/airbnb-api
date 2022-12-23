@@ -7,6 +7,7 @@ import insertPictureData from './insertPictureData'
 
 import yangjiang from './data/yangjiang.json'
 import hailingdao from './data/hailingdao.json'
+import yangdongqu from './data/yangdongqu.json'
 import guangzhou from './data/guangzhou.json'
 import shenzhen from './data/shenzhen.json'
 import foshan from './data/foshan.json'
@@ -17,6 +18,7 @@ import { IRoomData } from './types'
 const examineData: any[] = [
   yangjiang,
   hailingdao,
+  yangdongqu,
   guangzhou,
   shenzhen,
   foshan,

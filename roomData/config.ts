@@ -16,6 +16,11 @@ export const regionURLMap = [
     url: 'https://ihotel.meituan.com/hbsearch/HotelSearch?utm_medium=touch&version_name=999.9&platformid=1&cateId=20&newcate=1&limit=20&offset=0&cityId=285&ci=285&startendday=20221222~20221222&startDay=20221222&endDay=20221222&q=%E6%B5%B7%E9%99%B5%E5%B2%9B&ste=_b400202&attr_28=129&sort=defaults&userid=3137579518&uuid=43EC326BD7BD595FCD8D84C55024269801BEF4E7DBB4C12B62B8C9CB5DD2E900&keyword=%E6%B5%B7%E9%99%B5%E5%B2%9B&accommodationType=1'
   },
   {
+    name: '阳东区',
+    filename: 'yangdongqu',
+    url: 'https://ihotel.meituan.com/hbsearch/HotelSearch?utm_medium=touch&version_name=999.9&platformid=1&cateId=20&newcate=1&limit=20&offset=0&cityId=285&ci=285&startendday=20221222~20221222&startDay=20221222&endDay=20221222&ste=_b400202&attr_28=129&sort=defaults&areaId=3687&userid=3137579518&uuid=43EC326BD7BD595FCD8D84C55024269801BEF4E7DBB4C12B62B8C9CB5DD2E900&accommodationType=1'
+  },
+  {
     name: '广州',
     filename: 'guangzhou',
     url: 'https://ihotel.meituan.com/hbsearch/HotelSearch?utm_medium=touch&version_name=999.9&platformid=1&cateId=20&newcate=1&limit=100&offset=0&cityId=20&ci=20&startendday=20221222~20221222&startDay=20221222&endDay=20221222&ste=_b400202&attr_28=129&sort=defaults&userid=3137579518&uuid=43EC326BD7BD595FCD8D84C55024269801BEF4E7DBB4C12B62B8C9CB5DD2E900&accommodationType=1'
