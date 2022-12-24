@@ -5,8 +5,8 @@ import { extendRoom } from '@/utils/extendRoom'
 import IHomeController from './types'
 
 const homeController: IHomeController = {
-  async hotRecommendDest(ctx) {
-    const data = await homeService.hotRecommendDest()
+  async wonderfulPlaces(ctx) {
+    const data = await homeService.wonderfulPlaces()
 
     for (const key in data) {
       for (const room of data[key]) {

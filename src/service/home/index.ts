@@ -1,9 +1,9 @@
 import pool from '@/app/database'
 
-import IHomeService, { IHotRecommendDestRes, IHomeRoom } from './types'
+import IHomeService, { IWonderfulPlacesRes, IHomeRoom } from './types'
 
 const homeService: IHomeService = {
-  async hotRecommendDest() {
+  async wonderfulPlaces() {
     const statement = `
       SELECT
       	name,
@@ -22,14 +22,12 @@ const homeService: IHomeService = {
       areaRoomMap[name] = rooms.slice(0, 6)
     })
 
-    function extendHandle(
-      target: IHotRecommendDestRes
-    ): Promise<IHotRecommendDestRes> {
-      return new Promise((resolve) => {
+    function extendHandle(target: IWonderfulPlacesRes) {
+      return new Promise<IWonderfulPlacesRes>((resolve) => {
         let count = 0
         let successCount = 0
 
-        const extendHandleRes: IHotRecommendDestRes = {}
+        const extendHandleRes: IWonderfulPlacesRes = {}
 
         for (const areaKey in target) {
           const rooms = target[areaKey]

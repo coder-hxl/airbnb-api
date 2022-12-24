@@ -11,10 +11,10 @@ export interface IHomeRoom {
   [key: string]: any
 }
 
-export interface IHotRecommendDestRes {
+export interface IWonderfulPlacesRes {
   [key: string]: IHomeRoom[]
 }
 
 export default interface IHomeService {
-  hotRecommendDest(): Promise<IHotRecommendDestRes>
+  wonderfulPlaces(): Promise<IWonderfulPlacesRes>
 }
