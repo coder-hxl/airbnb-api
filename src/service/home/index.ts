@@ -1,33 +1,43 @@
 import pool from '@/app/database'
 
-import IHomeService, { IWonderfulPlacesRes, IHomeRoom } from './types'
+import IHomeService, { IPlaceRes, IHomeRoom, IArea } from './types'
 
 const homeService: IHomeService = {
-  async wonderfulPlaces() {
+  async getRoomByArea(area) {},
+
+  async wonderfulPlace(area, deep1, deep2) {
     const statement = `
       SELECT
-      	name,
+      	a2.id, a2.name, a2.ext_path, a2.deep,
       	(SELECT
       		JSON_ARRAYAGG(JSON_OBJECT('id', r.id, 'name', r.name,
       		'price', r.price, 'type', r.type, 'coverUrl', r.cover_url))
-      	FROM room r WHERE ST_Intersects(polygon, r.geo)=1) rooms
-      FROM area WHERE ext_path LIKE '%阳江市%' AND deep = 2;
+      	FROM room r WHERE ST_Intersects(a2.polygon, r.geo)=1) rooms
+      FROM area a1
+      LEFT JOIN area a2 ON a1.id = a2.pid
+      WHERE a1.name = ? AND a1.deep = ? AND a2.deep = ?
+      ORDER BY a2.id ASC;
     `
 
-    const [areaRoom] = await pool.execute<any[]>(statement)
+    const [areaRoom] = await pool.execute<any[]>(statement, [
+      area,
+      deep1,
+      deep2
+    ])
 
     const areaRoomMap: any = {}
     areaRoom.forEach((item) => {
       const { name, rooms } = item
+      if (!rooms) return
       areaRoomMap[name] = rooms.slice(0, 6)
     })
 
-    function extendHandle(target: IWonderfulPlacesRes) {
-      return new Promise<IWonderfulPlacesRes>((resolve) => {
+    function extendHandle(target: IPlaceRes) {
+      return new Promise<IPlaceRes>((resolve) => {
         let count = 0
         let successCount = 0
 
-        const extendHandleRes: IWonderfulPlacesRes = {}
+        const extendHandleRes: IPlaceRes = {}
 
         for (const areaKey in target) {
           const rooms = target[areaKey]
@@ -91,6 +101,29 @@ const homeService: IHomeService = {
     const res = await extendHandle(areaRoomMap)
 
     return res
+  },
+
+  async hotPlace() {
+    const statement = `
+      SELECT id, name, ext_path, deep, polygon
+      FROM area WHERE ext_path LIKE '%江城区%' AND deep = 2;
+    `
+
+    const [areaRes] = await pool.query<any[]>(statement)
+    const data: IArea = areaRes[0]
+
+    const roomStatement = `
+      SELECT * FROM room WHERE ST_Intersects(ST_GeomFromText(MULTIPOLYGON(((?))), 0), geo)=1;
+    `
+
+    console.log(data.polygon)
+    try {
+      await pool.execute(roomStatement, [data.polygon])
+    } catch (error) {
+      console.log(error)
+    }
+
+    return 'test'
   }
 }
 

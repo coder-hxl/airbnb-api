@@ -4,6 +4,7 @@ import homeController from '@/controller/home'
 
 const homeRouter = new Router({ prefix: '/home' })
 
-homeRouter.get('/wonderfulplaces', homeController.wonderfulPlaces)
+homeRouter.get('/wonderfulplace', homeController.wonderfulPlace)
+homeRouter.get('/hotplace', homeController.hotPlace)
 
 export default homeRouter

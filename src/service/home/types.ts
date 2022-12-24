@@ -11,10 +11,19 @@ export interface IHomeRoom {
   [key: string]: any
 }
 
-export interface IWonderfulPlacesRes {
+export interface IPlaceRes {
   [key: string]: IHomeRoom[]
 }
 
+export interface IArea {
+  id: number
+  name: string
+  extPath: string
+  polygon: any
+}
+
 export default interface IHomeService {
-  wonderfulPlaces(): Promise<IWonderfulPlacesRes>
+  getRoomByArea(area: IArea[]): Promise<any>
+  wonderfulPlace(area: string, deep1: number, deep2: number): Promise<IPlaceRes>
+  hotPlace(): Promise<any>
 }
