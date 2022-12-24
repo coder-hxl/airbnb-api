@@ -25,21 +25,21 @@ const homeService: IHomeService = {
     function extendHandle(
       target: IHotRecommendDestRes
     ): Promise<IHotRecommendDestRes> {
-      let count = 0
-      let successCount = 0
-
-      const extendHandleRes: IHotRecommendDestRes = {}
-
       return new Promise((resolve) => {
+        let count = 0
+        let successCount = 0
+
+        const extendHandleRes: IHotRecommendDestRes = {}
+
         for (const areaKey in target) {
           const rooms = target[areaKey]
           const newRooms: IHomeRoom[] = (extendHandleRes[areaKey] = [])
 
           for (const room of rooms) {
-            count += 2
+            count++
             const { id, name, type, price, coverUrl } = room
 
-            // 进行排序
+            // 调整顺序。保留内存地址, 方便添加内容
             const newRoom: IHomeRoom = {
               id,
               name,
@@ -68,19 +68,23 @@ const homeService: IHomeService = {
               `
             }
 
+            const executes: Promise<any>[] = []
             for (const item of Object.values(statement)) {
-              pool.execute<any[]>(item, [id]).then((exeRes) => {
-                const res = exeRes[0][0]
-
-                for (const key in res) {
-                  newRoom[key] = res[key]
-                }
-
-                if (count == ++successCount) {
-                  resolve(extendHandleRes)
-                }
-              })
+              executes.push(pool.execute(item, [id]))
             }
+
+            Promise.all(executes).then((res) => {
+              for (const item of res) {
+                const value = item[0][0]
+                for (const key in value) {
+                  newRoom[key] = value[key]
+                }
+              }
+
+              if (count == ++successCount) {
+                resolve(extendHandleRes)
+              }
+            })
           }
         }
       })

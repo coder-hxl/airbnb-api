@@ -1,9 +1,8 @@
-export interface IDetailStatement {
+export interface IDetailStatementObj {
   rootStatement: string
   pictureUrlStatement: string
   bedTypeStatement: string
   reviewStatement: string
-  [key: string]: string
 }
 
 export interface IDetailCommonRes extends Object {
