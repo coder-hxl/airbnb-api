@@ -1,11 +1,11 @@
 import { Middleware } from '@koa/router'
-import type { IPlaceRes } from '@/service/home/types'
+import type { IAreaRooms } from '@/service/home/types'
 import { AnyObject } from '@/types/commonTypes'
 
 export interface IData {
   title: string
   subtitle: string | null
-  destList: IPlaceRes
+  destList: IAreaRooms
 }
 
 type IHomeControllerMiddleware = Middleware<

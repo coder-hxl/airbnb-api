@@ -1,53 +1,37 @@
 import pool from '@/app/database'
+import { extendRoom } from '@/utils/extendRoom'
 
-import IHomeService, { IPlaceRes, IHomeRoom, IArea } from './types'
+import IHomeService, { IHomeRoom, IArea, IAreaRoom, IAreaRooms } from './types'
 
 const homeService: IHomeService = {
-  async getRoomByArea(area) {},
-
-  async wonderfulPlace(area, deep1, deep2) {
-    const statement = `
-      SELECT
-      	a2.id, a2.name, a2.ext_path, a2.deep,
-      	(SELECT
-      		JSON_ARRAYAGG(JSON_OBJECT('id', r.id, 'name', r.name,
-      		'price', r.price, 'type', r.type, 'coverUrl', r.cover_url))
-      	FROM room r WHERE ST_Intersects(a2.polygon, r.geo)=1) rooms
-      FROM area a1
-      LEFT JOIN area a2 ON a1.id = a2.pid
-      WHERE a1.name = ? AND a1.deep = ? AND a2.deep = ?
-      ORDER BY a2.id ASC;
-    `
-
-    const [areaRoom] = await pool.execute<any[]>(statement, [
-      area,
-      deep1,
-      deep2
-    ])
-
-    const areaRoomMap: any = {}
-    areaRoom.forEach((item) => {
-      const { name, rooms } = item
-      if (!rooms) return
-      areaRoomMap[name] = rooms.slice(0, 6)
-    })
-
-    function extendHandle(target: IPlaceRes) {
-      return new Promise<IPlaceRes>((resolve) => {
+  getRoomByArea(areas) {
+    function areaRoomsHandle(areaRooms: IAreaRooms) {
+      return new Promise<IAreaRooms>((resolve) => {
         let count = 0
         let successCount = 0
 
-        const extendHandleRes: IPlaceRes = {}
+        const handleRes: IAreaRooms = []
 
-        for (const areaKey in target) {
-          const rooms = target[areaKey]
-          const newRooms: IHomeRoom[] = (extendHandleRes[areaKey] = [])
+        for (const area of areaRooms) {
+          const { id, name, extPath, deep, rooms } = area
 
+          // 调整顺序。保留内存地址, 方便添加内容
+          const newArea: IAreaRoom = {
+            id,
+            name,
+            extPath,
+            deep,
+            rooms: []
+          }
+          const newRooms = newArea.rooms
+
+          handleRes.push(newArea)
+
+          // 给房间扩展内容
           for (const room of rooms) {
             count++
             const { id, name, type, price, coverUrl } = room
 
-            // 调整顺序。保留内存地址, 方便添加内容
             const newRoom: IHomeRoom = {
               id,
               name,
@@ -68,6 +52,7 @@ const homeService: IHomeService = {
                 FROM room_review r
                 WHERE room_id = ?;
               `,
+
               bedTypeStatement: `
                 SELECT JSON_ARRAYAGG(rbt.name) bedTypes
                 FROM room_room_bed_type rrbt
@@ -89,8 +74,10 @@ const homeService: IHomeService = {
                 }
               }
 
+              extendRoom(newRoom)
+
               if (count == ++successCount) {
-                resolve(extendHandleRes)
+                resolve(handleRes)
               }
             })
           }
@@ -98,32 +85,72 @@ const homeService: IHomeService = {
       })
     }
 
-    const res = await extendHandle(areaRoomMap)
+    return new Promise((resolve) => {
+      // 随机取 6 条数据
+      const statement = `
+        SELECT id, name, price, type, cover_url coverUrl FROM room
+        WHERE
+          ST_Intersects((SELECT polygon FROM area WHERE ext_path = ?), geo) = 1
+        ORDER BY RAND() LIMIT 6;
+      `
 
-    return res
+      const executes: Promise<any[]>[] = []
+      for (const area of areas) {
+        const { extPath } = area
+        executes.push(pool.execute(statement, [extPath]))
+      }
+
+      Promise.all(executes).then((exeRes) => {
+        const areaRooms: IAreaRooms = []
+
+        // 过滤数据
+        areas.forEach((area, index) => {
+          const { id, name, extPath, deep } = area
+          // index 拿到每个地区对应的房间
+          const rooms = exeRes[index][0]
+
+          if (!rooms.length) return
+
+          areaRooms.push({
+            id,
+            name,
+            extPath,
+            deep,
+            rooms
+          })
+        })
+
+        areaRoomsHandle(areaRooms).then(resolve)
+      })
+    })
+  },
+
+  async wonderfulPlace() {
+    const areaStatement = `
+      SELECT id, name, ext_path extPath, deep
+      FROM area WHERE ext_path LIKE '%广东省 阳江市%' AND deep = 2;
+    `
+
+    const areaExeRes = await pool.execute<any[]>(areaStatement)
+    const areaRes = areaExeRes[0] as IArea[]
+
+    const areaRoomRes = await this.getRoomByArea(areaRes)
+
+    return areaRoomRes
   },
 
   async hotPlace() {
-    const statement = `
-      SELECT id, name, ext_path, deep, polygon
-      FROM area WHERE ext_path LIKE '%江城区%' AND deep = 2;
+    const areaStatement = `
+      SELECT id, name, ext_path extPath, deep
+      FROM area WHERE ext_path LIKE '%广东省%' AND deep = 1;
     `
 
-    const [areaRes] = await pool.query<any[]>(statement)
-    const data: IArea = areaRes[0]
+    const areaExeRes = await pool.execute<any[]>(areaStatement)
+    const areaRes = areaExeRes[0] as IArea[]
 
-    const roomStatement = `
-      SELECT * FROM room WHERE ST_Intersects(ST_GeomFromText(MULTIPOLYGON(((?))), 0), geo)=1;
-    `
+    const areaRoomRes = await this.getRoomByArea(areaRes)
 
-    console.log(data.polygon)
-    try {
-      await pool.execute(roomStatement, [data.polygon])
-    } catch (error) {
-      console.log(error)
-    }
-
-    return 'test'
+    return areaRoomRes
   }
 }
 
