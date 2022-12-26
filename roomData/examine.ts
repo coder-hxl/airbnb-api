@@ -13,17 +13,15 @@ import shenzhen from './data/shenzhen.json'
 import foshan from './data/foshan.json'
 import zhuhai from './data/zhuhai.json'
 
+import chaozhou from './data/chaozhou.json'
+import jiangmen from './data/jiangmen.json'
+import maoming from './data/maoming.json'
+import qingyuan from './data/qingyuan.json'
+import zhanjiang from './data/zhanjiang.json'
+
 import { IRoomData } from './types'
 
-const examineData: any[] = [
-  yangjiang,
-  hailingdao,
-  yangdongqu,
-  guangzhou,
-  shenzhen,
-  foshan,
-  zhuhai
-]
+const examineData: any[] = [chaozhou, jiangmen, maoming, qingyuan, zhanjiang]
 
 const targetPath = path.resolve(__dirname, '../upload/room')
 const roomIds = fs.readdirSync(targetPath)
