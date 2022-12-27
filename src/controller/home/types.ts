@@ -1,23 +1,24 @@
 import { Middleware } from '@koa/router'
-import type { IAreaRooms } from '@/service/home/types'
+import type { IAreaRooms, ILongfors } from '@/service/home/types'
 import { AnyObject } from '@/types/commonTypes'
 
-export interface IData {
+export interface IData<L> {
   title: string
   subtitle: string | null
-  destList: IAreaRooms
+  list: L
 }
 
-type IHomeControllerMiddleware = Middleware<
+type IHomeControllerMiddleware<L> = Middleware<
   any,
   AnyObject,
   {
     code: number
-    data: IData
+    data: IData<L>
   }
 >
 
 export default interface IHomeController {
-  wonderfulPlace: IHomeControllerMiddleware
-  hotPlace: IHomeControllerMiddleware
+  wonderfulPlace: IHomeControllerMiddleware<IAreaRooms>
+  hotPlace: IHomeControllerMiddleware<IAreaRooms>
+  longfor: IHomeControllerMiddleware<ILongfors>
 }

@@ -4,7 +4,7 @@ import insertPictureData from './insertPictureData'
 
 import examine from './examine'
 
-import pictureHandle from './other/pictureHandle'
+import { roomPictureHandle, areaPictureHandle } from './other/pictureHandle'
 
 import { regionURLMap } from './config'
 
@@ -24,4 +24,6 @@ import { regionURLMap } from './config'
 
 // ================ 3 ================
 // 将数据库中图片的假数据删掉
-pictureHandle()
+// roomPictureHandle()
+
+// areaPictureHandle()

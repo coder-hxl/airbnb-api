@@ -18,6 +18,8 @@ export const {
   MYSQL_PORT,
   MYSQL_USER,
   MYSQL_PASSWORD,
-  MYSQL_DATABASE,
-  USE_GITHUB_REP
+  MYSQL_DATABASE
 } = process.env
+
+export const USE_GITHUB_REP =
+  process.env.USE_GITHUB_REP == 'true' ? true : false

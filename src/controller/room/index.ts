@@ -2,7 +2,6 @@ import fs from 'node:fs'
 
 import commonService from '@/service/common'
 import roomService from '@/service/room'
-import { extendRoom } from '@/utils/extendRoom'
 
 import { APP_HOST, APP_PORT } from '@/app/config'
 import { ROOM_PICTURE_NAME } from '@/constants/table'
@@ -15,8 +14,6 @@ const roomController: IRoomController = {
     const { roomId } = ctx.params
 
     const data = await roomService.detail(roomId)
-
-    extendRoom(data)
 
     ctx.body = { code: 200, data }
   },

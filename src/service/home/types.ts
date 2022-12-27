@@ -24,8 +24,16 @@ export interface IAreaRoom extends IArea {
 
 export type IAreaRooms = IAreaRoom[]
 
+export type ILongfors = {
+  id: number
+  city: string
+  price: string
+  pictureUrl: string
+}[]
+
 export default interface IHomeService {
   getRoomByArea(areas: IArea[]): Promise<IAreaRooms>
   wonderfulPlace(): Promise<IAreaRooms>
   hotPlace(): Promise<IAreaRooms>
+  longfor(): Promise<ILongfors>
 }

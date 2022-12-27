@@ -1,6 +1,9 @@
 import pool from '@/app/database'
 import { extendRoom } from '@/utils/extendRoom'
 
+import { USE_GITHUB_REP } from '@/app/config'
+import { GITHUB_AREA_PICTURE } from '@/constants/filepath'
+
 import IHomeService, { IHomeRoom, IArea, IAreaRoom, IAreaRooms } from './types'
 
 const homeService: IHomeService = {
@@ -90,14 +93,14 @@ const homeService: IHomeService = {
       const statement = `
         SELECT id, name, price, type, cover_url coverUrl FROM room
         WHERE
-          ST_Intersects((SELECT polygon FROM area WHERE ext_path = ?), geo) = 1
+          ST_Intersects((SELECT polygon FROM area WHERE id = ?), geo) = 1
         ORDER BY RAND() LIMIT 6;
       `
 
       const executes: Promise<any[]>[] = []
       for (const area of areas) {
-        const { extPath } = area
-        executes.push(pool.execute(statement, [extPath]))
+        const { id } = area
+        executes.push(pool.execute(statement, [id]))
       }
 
       Promise.all(executes).then((exeRes) => {
@@ -151,6 +154,49 @@ const homeService: IHomeService = {
     const areaRoomRes = await this.getRoomByArea(areaRes)
 
     return areaRoomRes
+  },
+
+  async longfor() {
+    const statement = `
+      SELECT id, name city, picture_url pictureUrl
+      FROM area WHERE picture_url != '';
+    `
+
+    const exeRes = await pool.execute<any[]>(statement)
+    const citys: {
+      id: number
+      city: string
+      price: number
+      pictureUrl: string
+    }[] = exeRes[0]
+
+    const pricesStatement = `
+      SELECT CONCAT('¥', ROUND(AVG(price), 1), '/晚') price FROM room
+      WHERE ST_Intersects((SELECT polygon FROM area WHERE id = ?), geo) = 1
+    `
+
+    const executes: Promise<any>[] = []
+    for (const city of citys) {
+      const { id } = city
+      executes.push(pool.execute(pricesStatement, [id]))
+    }
+
+    const pricesExeRes = await Promise.all(executes)
+    const res = citys.map((item, index) => {
+      const { id, city, pictureUrl } = item
+      const { price } = pricesExeRes[index][0][0] as { price: string }
+
+      let url = pictureUrl
+      // 使用 github 图床
+      if (USE_GITHUB_REP) {
+        const filename = pictureUrl.split('/picture/')[1]
+        url = `${GITHUB_AREA_PICTURE}/${filename}`
+      }
+
+      return { id, city, price, pictureUrl: url }
+    })
+
+    return res
   }
 }
 

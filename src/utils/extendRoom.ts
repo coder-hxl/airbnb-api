@@ -12,7 +12,7 @@ interface IRoom {
 
 export function extendRoom(room: IRoom) {
   // 是否使用 github 图床, 默认使用
-  if (USE_GITHUB_REP == 'true') {
+  if (USE_GITHUB_REP) {
     const { id, coverUrl } = room
 
     const changUrl = (url: string) => {

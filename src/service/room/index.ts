@@ -1,4 +1,5 @@
 import pool from '@/app/database'
+import { extendRoom } from '@/utils/extendRoom'
 
 import IRoomService, {
   IDetailQueryRes,
@@ -104,6 +105,8 @@ const roomService: IRoomService = {
       landlord,
       scoreDesc: null
     }
+
+    extendRoom(res)
 
     return res
   }
