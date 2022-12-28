@@ -73,7 +73,11 @@ const homeService: IHomeService = {
               for (const item of res) {
                 const value = item[0][0]
                 for (const key in value) {
-                  newRoom[key] = value[key]
+                  if (key == 'starRating' && value[key] != null) {
+                    newRoom[key] = Number(value[key])
+                  } else {
+                    newRoom[key] = value[key]
+                  }
                 }
               }
 
@@ -171,7 +175,7 @@ const homeService: IHomeService = {
     }[] = exeRes[0]
 
     const pricesStatement = `
-      SELECT CONCAT('¥', ROUND(AVG(price), 1), '/晚') price FROM room
+      SELECT CONCAT('¥', ROUND(AVG(price), 0), '/晚') price FROM room
       WHERE ST_Intersects((SELECT polygon FROM area WHERE id = ?), geo) = 1
     `
 

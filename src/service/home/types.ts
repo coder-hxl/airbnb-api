@@ -4,7 +4,7 @@ export interface IHomeRoom {
   type: string
   price: number
   coverUrl: string
-  starRating: string | null
+  starRating: number | null
   reviewsCount: number
   bedTypes: string[]
   scoreDesc: string | null

@@ -6,7 +6,7 @@ interface IRoom {
   coverUrl: string
   pictureUrls?: string[]
   reviewsCount: number
-  starRating: string | null
+  starRating: number | null
   scoreDesc: string | null
 }
 
@@ -28,7 +28,8 @@ export function extendRoom(room: IRoom) {
   }
 
   // 是否满足超赞条件
-  if (room.reviewsCount >= 2 && Number(room.starRating) >= 4.5) {
+  const starRating = room.starRating ?? 0
+  if (room.reviewsCount >= 2 && starRating >= 4.5) {
     room.scoreDesc = '超赞房东'
   }
 }
