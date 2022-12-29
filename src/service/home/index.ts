@@ -7,7 +7,7 @@ import { GITHUB_AREA_PICTURE } from '@/constants/filepath'
 import IHomeService, { IHomeRoom, IArea, IAreaRoom, IAreaRooms } from './types'
 
 const homeService: IHomeService = {
-  getRoomByArea(areas) {
+  getRoomByArea(areas, roomLength) {
     function areaRoomsHandle(areaRooms: IAreaRooms) {
       return new Promise<IAreaRooms>((resolve) => {
         let count = 0
@@ -98,13 +98,13 @@ const homeService: IHomeService = {
         SELECT id, name, price, type, cover_url coverUrl FROM room
         WHERE
           ST_Intersects((SELECT polygon FROM area WHERE id = ?), geo) = 1
-        ORDER BY RAND() LIMIT 6;
+        ORDER BY RAND() LIMIT ?;
       `
 
       const executes: Promise<any[]>[] = []
       for (const area of areas) {
         const { id } = area
-        executes.push(pool.execute(statement, [id]))
+        executes.push(pool.execute(statement, [id, String(roomLength)]))
       }
 
       Promise.all(executes).then((exeRes) => {
@@ -141,7 +141,7 @@ const homeService: IHomeService = {
     const areaExeRes = await pool.execute<any[]>(areaStatement)
     const areaRes = areaExeRes[0] as IArea[]
 
-    const areaRoomRes = await this.getRoomByArea(areaRes)
+    const areaRoomRes = await this.getRoomByArea(areaRes, 6)
 
     return areaRoomRes
   },
@@ -155,12 +155,12 @@ const homeService: IHomeService = {
     const areaExeRes = await pool.execute<any[]>(areaStatement)
     const areaRes = areaExeRes[0] as IArea[]
 
-    const areaRoomRes = await this.getRoomByArea(areaRes)
+    const areaRoomRes = await this.getRoomByArea(areaRes, 6)
 
     return areaRoomRes
   },
 
-  async longfor() {
+  async longFor() {
     const statement = `
       SELECT id, name city, picture_url pictureUrl
       FROM area WHERE picture_url != '';
@@ -199,6 +199,51 @@ const homeService: IHomeService = {
 
       return { id, city, price, pictureUrl: url }
     })
+
+    return res
+  },
+
+  async highScore() {
+    const areaStatement = `
+      SELECT id, name, ext_path extPath, deep
+      FROM area WHERE ext_path = '广东省 阳江市';
+    `
+
+    const areaExeRes = await pool.execute<any[]>(areaStatement)
+    const areas: IArea[] = areaExeRes[0]
+
+    const areaRoomRes = await this.getRoomByArea(areas, 8)
+    const res = areaRoomRes[0]
+
+    return res
+  },
+
+  async goodPrice() {
+    const areaStatement = `
+      SELECT id, name, ext_path extPath, deep
+      FROM area WHERE ext_path = '广东省 阳江市';
+    `
+
+    const areaExeRes = await pool.execute<any[]>(areaStatement)
+    const areas: IArea[] = areaExeRes[0]
+
+    const areaRoomRes = await this.getRoomByArea(areas, 8)
+    const res = areaRoomRes[0]
+
+    return res
+  },
+
+  async plus() {
+    const areaStatement = `
+      SELECT id, name, ext_path extPath, deep
+      FROM area WHERE ext_path = '广东省 阳江市';
+    `
+
+    const areaExeRes = await pool.execute<any[]>(areaStatement)
+    const areas: IArea[] = areaExeRes[0]
+
+    const areaRoomRes = await this.getRoomByArea(areas, 8)
+    const res = areaRoomRes[0]
 
     return res
   }
