@@ -5,7 +5,7 @@ import path from 'node:path'
 import pool from '@/app/database'
 import { APP_HOST, APP_PORT } from '@/app/config'
 
-import type { IRoomData } from './types'
+import type { IRoomData } from '../types'
 
 interface ICounter {
   name: string

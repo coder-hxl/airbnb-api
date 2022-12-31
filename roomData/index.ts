@@ -1,8 +1,8 @@
-import getRoomData from './crawl'
-import insertRoomData from './insertRoomData'
-import insertPictureData from './insertPictureData'
+import getRoomData from './crawl/crawlRoomAndPicture'
+import insertRoomData from './insert/insertRoomData'
+import insertPictureData from './insert/insertPictureData'
 
-import examine from './examine'
+import examine from './other/examine'
 
 import { roomPictureHandle, areaPictureHandle } from './other/pictureHandle'
 

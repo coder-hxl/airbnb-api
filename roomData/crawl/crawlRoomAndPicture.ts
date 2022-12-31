@@ -3,9 +3,9 @@ import URL from 'node:url'
 import fs from 'node:fs'
 import path from 'node:path'
 
-import { headers, getRoomDetailUrl, getImgUrl } from './config'
+import { headers, getRoomDetailUrl, getImgUrl } from '../config'
 
-import type { IRoomData } from './types'
+import type { IRoomData } from '../types'
 
 type IGetPictureRes = {
   roomId: number
