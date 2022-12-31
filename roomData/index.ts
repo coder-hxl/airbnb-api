@@ -1,4 +1,5 @@
-import getRoomData from './crawl/crawlRoomAndPicture'
+import getRoomAndPictureData from './crawl/crawlRoomAndPicture'
+import getRoomReviewData from './crawl/crawlRoomReview'
 import insertRoomData from './insert/insertRoomData'
 import insertPictureData from './insert/insertPictureData'
 
@@ -13,7 +14,7 @@ import { regionURLMap } from './config'
 //   // 限制处理
 //   if (index !== 11) return
 
-//   getRoomData(1, item).then((res) =>
+//   getRoomAndPictureData(1, item).then((res) =>
 //     insertRoomData(res).then(() => insertPictureData(res))
 //   )
 // })
@@ -27,3 +28,6 @@ import { regionURLMap } from './config'
 // roomPictureHandle()
 
 // areaPictureHandle()
+
+// ================ 4 ================
+getRoomReviewData()

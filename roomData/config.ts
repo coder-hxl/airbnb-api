@@ -1,5 +1,3 @@
-// 数据来自美团
-
 type IRegionURLMap = {
   name: string
   filename: string
@@ -79,4 +77,8 @@ export function getRoomDetailUrl(roomId: number) {
 
 export function getImgUrl(roomId: number) {
   return `https://ihotel.meituan.com/group/v1/poi/${roomId}/imgs?utm_medium=touch&version_name=999.9&platformid=1&classified=true`
+}
+
+export function getRoomReviewUrl(roomId: number, size = 20) {
+  return `https://ihotel.meituan.com/api/v2/comments/biz/reviewList?referid=${roomId}&limit=${size}&start=0&filterid=800&querytype=1&utm_medium=touch&version_name=999.9`
 }

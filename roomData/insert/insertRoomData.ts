@@ -1,6 +1,6 @@
 import pool from '@/app/database'
 
-import type { IRoom, IRoomData } from './types'
+import type { IRoom, IRoomData } from '..//types'
 
 // ---------------------------------
 

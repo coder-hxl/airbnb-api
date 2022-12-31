@@ -1,9 +1,9 @@
-import https from 'node:https'
-import URL from 'node:url'
 import fs from 'node:fs'
 import path from 'node:path'
 
-import { headers, getRoomDetailUrl, getImgUrl } from '../config'
+import { get } from './common'
+
+import { getRoomDetailUrl, getImgUrl } from '../config'
 
 import type { IRoomData } from '../types'
 
@@ -16,20 +16,6 @@ type ISearchMap = {
   id: number
   price: number
 }[]
-
-function get<T = any>(url: string) {
-  const { host, pathname, search } = new URL.URL(url)
-  const path = pathname + search
-  return new Promise<T>((resolve) => {
-    https.get({ headers, host, path }, (res) => {
-      const content: Buffer[] = []
-      res.on('data', (chunk) => content.push(chunk))
-      res.on('end', () =>
-        resolve(JSON.parse(Buffer.concat(content).toString()))
-      )
-    })
-  })
-}
 
 function getRoomDetails(
   userId: number,
@@ -81,7 +67,7 @@ function getPicture(searchMap: ISearchMap) {
   })
 }
 
-export default async function getRoomData(
+export default async function getRoomAndPictureData(
   userId: number,
   region: { name: string; url: string; filename: string }
 ) {
