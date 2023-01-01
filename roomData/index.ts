@@ -1,6 +1,6 @@
 import getRoomAndPictureData from './crawl/crawlRoomAndPicture'
 import getRoomReviewData from './crawl/crawlRoomReview'
-import { insertRoomData } from './other/roomHandle'
+import { insertRoomData, handleRoomQualityByReview } from './other/roomHandle'
 import {
   insertRoomPictureData,
   invalidRoomPictureHandle
@@ -34,3 +34,5 @@ import { regionURLMap } from './config'
 
 // ================ 4 ================
 // getRoomReviewData()
+
+handleRoomQualityByReview()

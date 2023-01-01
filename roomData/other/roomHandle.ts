@@ -86,3 +86,43 @@ export async function insertRoomData(data: IRoomData) {
 
   console.log(`插入 ${region} 数据完成, 数据总数: ${list.length}`)
 }
+
+export async function handleRoomQualityByReview() {
+  const reviewsStatement = `
+    SELECT
+	    r.id, r.name, r.price,
+	    COUNT(rr.id) reviewCount,
+	    ROUND(AVG(rr.star_rating), 1) starRating
+    FROM room r
+    LEFT JOIN room_review rr ON r.id = rr.room_id
+    GROUP BY r.id;
+  `
+
+  const [reviewsRes] = await pool.execute<any[]>(reviewsStatement)
+
+  const executes: Promise<any>[] = []
+  for (const item of reviewsRes) {
+    const { id, price, reviewCount, starRating } = item
+
+    const isHighScore = reviewCount >= 36 && starRating >= 4.8 ? 1 : 0
+
+    const isGoodPrice =
+      price <= 288 && reviewCount >= 36 && starRating >= 4.5 ? 1 : 0
+
+    const isPlus = reviewCount >= 88 && starRating >= 4.9 ? 1 : 0
+
+    const statement = `
+      UPDATE room
+      SET is_good_price = ?, is_high_score = ?, is_plus = ?
+      WHERE id = ?;
+    `
+
+    executes.push(
+      pool.execute(statement, [isGoodPrice, isHighScore, isPlus, id])
+    )
+  }
+
+  Promise.all(executes).then(() => {
+    console.log('给房间添加 isGoodPrice isHighScore isPlus 完成~')
+  })
+}
