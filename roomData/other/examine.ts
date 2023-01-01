@@ -2,8 +2,8 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 import pool from '@/app/database'
-import insertRoomData from '../insert/insertRoomData'
-import insertPictureData from '../insert/insertPictureData'
+import { insertRoomData } from './roomHandle'
+import { insertRoomPictureData } from './roomPictureHandle'
 
 import yangjiang from '../data/yangjiang.json'
 import hailingdao from '../data/hailingdao.json'
@@ -43,7 +43,7 @@ export default function examine() {
         if (count == ++deleteCount) {
           console.log('检查完毕, 开始下载~')
           examineData.forEach((item: IRoomData) => {
-            insertRoomData(item).then(() => insertPictureData(item))
+            insertRoomData(item).then(() => insertRoomPictureData(item))
           })
         }
       })

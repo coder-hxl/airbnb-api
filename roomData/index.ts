@@ -1,11 +1,14 @@
 import getRoomAndPictureData from './crawl/crawlRoomAndPicture'
 import getRoomReviewData from './crawl/crawlRoomReview'
-import insertRoomData from './insert/insertRoomData'
-import insertPictureData from './insert/insertPictureData'
+import { insertRoomData } from './other/roomHandle'
+import {
+  insertRoomPictureData,
+  invalidRoomPictureHandle
+} from './other/roomPictureHandle'
 
 import examine from './other/examine'
 
-import { roomPictureHandle, areaPictureHandle } from './other/pictureHandle'
+import { areaPictureHandle } from './other/areaPictureHandle'
 
 import { regionURLMap } from './config'
 
@@ -15,7 +18,7 @@ import { regionURLMap } from './config'
 //   if (index !== 11) return
 
 //   getRoomAndPictureData(1, item).then((res) =>
-//     insertRoomData(res).then(() => insertPictureData(res))
+//     insertRoomData(res).then(() => insertRoomPictureData(res))
 //   )
 // })
 
@@ -25,9 +28,9 @@ import { regionURLMap } from './config'
 
 // ================ 3 ================
 // 将数据库中图片的假数据删掉
-// roomPictureHandle()
+// invalidRoomPictureHandle()
 
 // areaPictureHandle()
 
 // ================ 4 ================
-getRoomReviewData()
+// getRoomReviewData()
