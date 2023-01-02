@@ -32,7 +32,11 @@ export type ILongFors = {
 }[]
 
 export default interface IHomeService {
-  getRoomByArea(areas: IArea[], roomLength: number): Promise<IAreaRooms>
+  getRoomByArea(
+    areas: IArea[],
+    roomLength: number,
+    roomOption?: string
+  ): Promise<IAreaRooms>
   wonderfulPlace(): Promise<IAreaRooms>
   hotPlace(): Promise<IAreaRooms>
   longFor(): Promise<ILongFors>

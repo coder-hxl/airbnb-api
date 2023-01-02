@@ -7,7 +7,7 @@ import { GITHUB_AREA_PICTURE } from '@/constants/filepath'
 import IHomeService, { IHomeRoom, IArea, IAreaRoom, IAreaRooms } from './types'
 
 const homeService: IHomeService = {
-  getRoomByArea(areas, roomLength) {
+  getRoomByArea(areas, roomLength, roomOption) {
     function areaRoomsHandle(areaRooms: IAreaRooms) {
       return new Promise<IAreaRooms>((resolve) => {
         let count = 0
@@ -73,11 +73,7 @@ const homeService: IHomeService = {
               for (const item of res) {
                 const value = item[0][0]
                 for (const key in value) {
-                  if (key == 'starRating' && value[key] != null) {
-                    newRoom[key] = Number(value[key])
-                  } else {
-                    newRoom[key] = value[key]
-                  }
+                  newRoom[key] = value[key]
                 }
               }
 
@@ -93,11 +89,12 @@ const homeService: IHomeService = {
     }
 
     return new Promise((resolve) => {
-      // 随机取 6 条数据
+      // 随机取房间数据
       const statement = `
         SELECT id, name, price, type, cover_url coverUrl FROM room
         WHERE
           ST_Intersects((SELECT polygon FROM area WHERE id = ?), geo) = 1
+          ${roomOption ? `AND ${roomOption}` : ''}
         ORDER BY RAND() LIMIT ?;
       `
 
@@ -163,7 +160,8 @@ const homeService: IHomeService = {
   async longFor() {
     const statement = `
       SELECT id, name city, picture_url pictureUrl
-      FROM area WHERE picture_url != '';
+      FROM area WHERE picture_url != ''
+      ORDER BY RAND() LIMIT 9;
     `
 
     const exeRes = await pool.execute<any[]>(statement)
@@ -212,7 +210,7 @@ const homeService: IHomeService = {
     const areaExeRes = await pool.execute<any[]>(areaStatement)
     const areas: IArea[] = areaExeRes[0]
 
-    const areaRoomRes = await this.getRoomByArea(areas, 8)
+    const areaRoomRes = await this.getRoomByArea(areas, 8, 'is_high_score = 1')
     const res = areaRoomRes[0]
 
     return res
@@ -227,7 +225,7 @@ const homeService: IHomeService = {
     const areaExeRes = await pool.execute<any[]>(areaStatement)
     const areas: IArea[] = areaExeRes[0]
 
-    const areaRoomRes = await this.getRoomByArea(areas, 8)
+    const areaRoomRes = await this.getRoomByArea(areas, 8, 'is_good_price = 1')
     const res = areaRoomRes[0]
 
     return res
@@ -242,7 +240,7 @@ const homeService: IHomeService = {
     const areaExeRes = await pool.execute<any[]>(areaStatement)
     const areas: IArea[] = areaExeRes[0]
 
-    const areaRoomRes = await this.getRoomByArea(areas, 8)
+    const areaRoomRes = await this.getRoomByArea(areas, 8, 'is_plus = 1')
     const res = areaRoomRes[0]
 
     return res
