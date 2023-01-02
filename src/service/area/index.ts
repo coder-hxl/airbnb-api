@@ -4,12 +4,22 @@ import { extendRoom } from '@/utils/extendRoom'
 import IAreaService, { IAreaRoom } from './types'
 
 const areaService: IAreaService = {
-  async detail(areaName, offset, size) {
+  async detail(areaName, type, offset, size) {
+    let roomOption: string | null = null
+    if (type == 'highScore') {
+      roomOption = 'is_high_score = 1'
+    } else if (type == 'goodPrice') {
+      roomOption = 'is_good_price = 1'
+    } else if (type === 'plus') {
+      roomOption = 'is_plus = 1'
+    }
+
     const roomStatement = `
       SELECT
       	id, name, price, type, cover_url coverUrl, geo
       FROM room
       WHERE ST_Intersects((SELECT polygon FROM area WHERE name = ?), geo) = 1
+        ${roomOption ? `AND ${roomOption}` : ''}
       LIMIT ?, ?;
     `
 
@@ -89,6 +99,7 @@ const areaService: IAreaService = {
       	COUNT(*) totalCount
       FROM room
       WHERE ST_Intersects((SELECT polygon FROM area WHERE name = ?), geo) = 1
+        ${roomOption ? `AND ${roomOption}` : ''}
     `
     const totalCountExeRes = await pool.execute<any[]>(totalCountStatment, [
       areaName

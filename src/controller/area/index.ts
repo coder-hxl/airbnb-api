@@ -22,9 +22,9 @@ const areaController: IAreaController = {
 
   async detail(ctx) {
     const { areaName } = ctx.params
-    const { offset, size } = ctx.request.body
+    const { type, offset, size } = ctx.request.body
 
-    const data = await areaService.detail(areaName, offset, size)
+    const data = await areaService.detail(areaName, type, offset, size)
 
     ctx.body = { code: 200, data }
   }

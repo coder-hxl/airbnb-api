@@ -19,5 +19,16 @@ interface IAreaDetail {
 }
 
 export default interface IAreaService {
-  detail(areaName: string, offset: number, size: number): Promise<IAreaDetail>
+  detail(
+    areaName: string,
+    type:
+      | 'wonderfulPlace'
+      | 'hotPlace'
+      | 'longFor'
+      | 'highScore'
+      | 'goodPrice'
+      | 'plus',
+    offset: number,
+    size: number
+  ): Promise<IAreaDetail>
 }
