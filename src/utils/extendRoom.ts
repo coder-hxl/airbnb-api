@@ -1,12 +1,12 @@
 import { USE_GITHUB_REP } from '@/app/config'
 import { GITHUB_ROOM_PICTURE } from '@/constants/filepath'
 
-interface IRoom {
+interface IRoom extends Object {
   id: number
   coverUrl: string
   pictureUrls?: string[]
   reviewsCount: number
-  starRating: number | null
+  starRating: number | string | null
   scoreDesc: string | null
 }
 
@@ -27,9 +27,11 @@ export function extendRoom(room: IRoom) {
     }
   }
 
-  // 是否满足超赞条件
-  const starRating = room.starRating ?? 0
-  if (room.reviewsCount >= 2 && starRating >= 4.5) {
-    room.scoreDesc = '超赞房东'
+  if (typeof room.starRating != 'undefined') {
+    room.starRating = Number(room.starRating)
+    // 是否满足超赞条件
+    if (room.reviewsCount >= 88 && room.starRating >= 4.8) {
+      room.scoreDesc = '超赞房东'
+    }
   }
 }
