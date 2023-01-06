@@ -1,4 +1,4 @@
-import { get } from './common'
+import { get, sleep } from './common'
 
 import pool from '@/app/database'
 
@@ -14,43 +14,50 @@ function getSize(min: number, max: number): number {
   return res
 }
 
+const hasReviewId = [
+  193581217, 597664, 92507, 643366, 961078, 1107323, 1133223, 1240008, 1240696
+]
 export default async function getRoomReviewData() {
   const roomStatement = `SELECT id FROM room;`
 
   const roomExeRes = await pool.execute<any[]>(roomStatement)
   const roomIds: number[] = roomExeRes[0]
     .map((item) => item.id)
-    .filter((id) => id !== 92507 && id !== 597664 && id !== 193581217)
+    .filter((id) => !hasReviewId.includes(id))
 
-  const reviewsExe: Promise<any>[] = []
+  const exeRes: Promise<any>[] = []
   for (const id of roomIds) {
+    console.log(id)
+
+    await sleep(getSize(3000, 6000))
+
     const size = getSize(30, 100)
     const url = getRoomReviewUrl(id, size)
-    reviewsExe.push(get(url))
+
+    const exe = get(url).then(async (res) => {
+      const reviews = res.Data.List.map((listItem: any) => ({
+        content: listItem.Content,
+        star: listItem.Star / 10
+      }))
+
+      const reviewExe: Promise<any>[] = []
+      for (const review of reviews) {
+        const { content, star } = review
+        const newStar = star == 5 ? star : getSize(0, 2) ? star + 0.5 : star
+
+        const statement = `INSERT INTO room_review (star_rating, comment, user_id, room_id) VALUES (?, ?, ?, ?);`
+
+        reviewExe.push(
+          pool.execute(statement, [newStar, content, getSize(1, 3), id])
+        )
+      }
+
+      return await Promise.all(reviewExe)
+    })
+
+    exeRes.push(exe)
   }
 
-  const reviewsExeRes = await Promise.all(reviewsExe)
-  const reviewList = reviewsExeRes.map((item) =>
-    item.Data.List.map((listItem: any) => ({
-      content: listItem.Content,
-      star: listItem.Star / 10
-    }))
-  )
-
-  const exes: Promise<any>[] = []
-  roomIds.forEach((id, index) => {
-    const review = reviewList[index]
-
-    for (const item of review) {
-      const { content, star } = item
-      const newStar = star == 5 ? star : getSize(0, 2) ? star + 0.5 : star
-
-      const statement = `INSERT INTO room_review (star_rating, comment, user_id, room_id) VALUES (?, ?, ?, ?);`
-
-      exes.push(pool.execute(statement, [newStar, content, getSize(1, 3), id]))
-    }
-  })
-
-  await Promise.all(exes)
+  await Promise.all(exeRes)
   console.log('完成~')
 }

@@ -33,6 +33,6 @@ import { regionURLMap } from './config'
 // areaPictureHandle()
 
 // ================ 4 ================
-// getRoomReviewData()
+getRoomReviewData()
 
-handleRoomQualityByReview()
+// handleRoomQualityByReview()

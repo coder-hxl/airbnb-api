@@ -109,7 +109,7 @@ export async function handleRoomQualityByReview() {
     const isGoodPrice =
       price <= 288 && reviewCount >= 36 && starRating >= 4.5 ? 1 : 0
 
-    const isPlus = reviewCount >= 88 && starRating >= 4.9 ? 1 : 0
+    const isPlus = reviewCount >= 66 && starRating >= 4.9 ? 1 : 0
 
     const statement = `
       UPDATE room
