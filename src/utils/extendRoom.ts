@@ -5,8 +5,8 @@ interface IRoom extends Object {
   id: number
   coverUrl: string
   pictureUrls?: string[]
-  reviewsCount: number
-  starRating: number | string | null
+  reviewsCount?: number
+  starRating?: number | string | null
   scoreDesc: string | null
 }
 
@@ -27,7 +27,10 @@ export function extendRoom(room: IRoom) {
     }
   }
 
-  if (typeof room.starRating != 'undefined') {
+  if (
+    typeof room.starRating != 'undefined' &&
+    typeof room.reviewsCount != 'undefined'
+  ) {
     room.starRating = Number(room.starRating)
     // 是否满足超赞条件
     if (room.reviewsCount >= 88 && room.starRating >= 4.8) {

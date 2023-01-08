@@ -18,6 +18,14 @@ const roomController: IRoomController = {
     ctx.body = { code: 200, data }
   },
 
+  async review(ctx) {
+    const { roomId, offset, size } = ctx.request.body
+
+    const data = await roomService.review(roomId, String(offset), String(size))
+
+    ctx.body = { code: 200, data }
+  },
+
   async picture(ctx) {
     const { roomId, filename } = ctx.params
     const url = `${APP_HOST}:${APP_PORT}/api/room/${roomId}/${ROOM_PICTURE_NAME}/${filename}`

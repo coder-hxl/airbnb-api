@@ -32,19 +32,6 @@ const roomService: IRoomService = {
             FROM room_room_bed_type rrbt
             LEFT JOIN room_bed_type rbt ON rbt.id = rrbt.bed_id
             WHERE rrbt.room_id = ?;
-          `,
-
-          reviewStatement: `
-            SELECT
-        	    ROUND(AVG(r.star_rating), 1) starRating, COUNT(*) reviewsCount,
-        	    JSON_ARRAYAGG(
-        		    JSON_OBJECT('id', r.id, 'star_rating', r.star_rating,
-        			    'comment', r.comment, 'createAt', r.create_at, 'user',
-                  JSON_OBJECT('id', u.id, 'name', u.name, 'avatar_url', u.avatar_url))
-              ) reviews
-            FROM room_review r
-            LEFT JOIN user u ON r.user_id = u.id
-            WHERE room_id = ?;
           `
         }
 
@@ -76,9 +63,6 @@ const roomService: IRoomService = {
       type,
       coverUrl,
       geo,
-      starRating,
-      reviewsCount,
-      reviews,
       pictureUrls,
       bedTypes,
       landlord
@@ -97,9 +81,6 @@ const roomService: IRoomService = {
       coverUrl,
       lng: geo.x,
       lat: geo.y,
-      starRating,
-      reviewsCount,
-      reviews,
       pictureUrls,
       bedTypes,
       landlord,
@@ -109,6 +90,50 @@ const roomService: IRoomService = {
     extendRoom(res)
 
     return res
+  },
+
+  async review(roomId, offset, size) {
+    const countStatement = `
+      SELECT
+        ROUND(AVG(star_rating), 1) starRating, COUNT(*) reviewCount
+      FROM room_review
+      WHERE room_id = ?;
+    `
+
+    const listStatement = `
+      SELECT
+        rr.id, rr.star_rating starRating, rr.comment, rr.create_at createAt,
+        JSON_OBJECT('id', u.id, 'name', u.name, 'avatar_url', u.avatar_url) user
+      FROM room_review rr
+      LEFT JOIN user u ON u.id = rr.user_id
+      WHERE rr.room_id = ?
+      LIMIT ?, ?;
+    `
+
+    const countPromise = pool
+      .execute<any>(countStatement, [roomId])
+      .then(([count]) => {
+        const { starRating, reviewCount } = count[0]
+
+        return { starRating: Number(starRating), reviewCount }
+      })
+
+    const listPromise = pool
+      .execute<any[]>(listStatement, [roomId, offset, size])
+      .then(([review]) => {
+        review.forEach((item) => {
+          item.starRating = Number(item.starRating)
+        })
+
+        return review
+      })
+
+    const [count, list] = await Promise.all([countPromise, listPromise])
+
+    return {
+      ...count,
+      list
+    }
   }
 }
 

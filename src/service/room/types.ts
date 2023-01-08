@@ -2,7 +2,6 @@ export interface IDetailStatementObj {
   rootStatement: string
   pictureUrlStatement: string
   bedTypeStatement: string
-  reviewStatement: string
 }
 
 export interface IDetailCommonRes extends Object {
@@ -15,20 +14,6 @@ export interface IDetailCommonRes extends Object {
   price: number
   type: string
   coverUrl: string
-  starRating: string | null
-  reviewsCount: number
-  reviews:
-    | {
-        id: number
-        comment: string
-        starRating: number
-        user: {
-          id: number
-          name: string
-          avatarUrl?: string
-        }
-      }[]
-    | null
   pictureUrls: string[]
   bedTypes: string[]
   landlord: {
@@ -51,6 +36,23 @@ export interface IDetailRes extends IDetailCommonRes {
   scoreDesc: string | null
 }
 
+export interface IReview {
+  starRating: number
+  reviewCount: number
+  list: {
+    id: number
+    comment: string
+    starRating: number
+    createAt: any
+    user: {
+      id: number
+      name: string
+      avatarUrl: string | null
+    }
+  }[]
+}
+
 export default interface IRoomService {
   detail(roomId: string): Promise<IDetailRes>
+  review(roomId: number, offset: string, size: string): Promise<IReview>
 }
