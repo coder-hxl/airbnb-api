@@ -4,7 +4,7 @@ import mapSqlStatement from '@/utils/mapSqlStatement'
 import { USER_TABLE_CREATE, USER_TABLE_NAME } from '@/constants/table'
 
 import type { ResultSetHeader } from 'mysql2'
-import type IUserService from './types'
+import IUserService, { IDetail } from './types'
 
 const userService: IUserService = {
   async create(userInfo) {
@@ -17,6 +17,20 @@ const userService: IUserService = {
     const [result] = await pool.execute<ResultSetHeader>(statement, values)
 
     return result
+  },
+
+  async detail(userId) {
+    const statement = `
+      SELECT
+        id, nickname, cellphone, introduce,
+        avatar_url avatarUrl, create_at createAt
+      FROM user WHERE id = ?;
+    `
+
+    const exeRes = await pool.execute<any[]>(statement, [userId])
+    const userInfo: IDetail = exeRes[0][0]
+
+    return userInfo
   }
 }
 

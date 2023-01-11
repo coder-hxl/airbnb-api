@@ -12,6 +12,17 @@ const userController: IUserController = {
       code: 200,
       data: result
     }
+  },
+
+  async detail(ctx) {
+    const { userId } = ctx.params
+
+    const userInfo = await userService.detail(userId)
+
+    ctx.body = {
+      code: 200,
+      data: userInfo
+    }
   }
 }
 
