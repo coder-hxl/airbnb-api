@@ -19,7 +19,9 @@ const areaService: IAreaService = {
       	id, name, price, type, cover_url coverUrl, geo
       FROM room
       WHERE
-        ST_Intersects((SELECT polygon FROM area WHERE name = ?), geo) = 1
+        ST_Intersects(
+          (SELECT polygon FROM area WHERE name LIKE ?), geo
+        ) = 1
         ${roomOption ? `AND ${roomOption}` : ''}
       LIMIT ?, ?;
     `
@@ -28,12 +30,18 @@ const areaService: IAreaService = {
       	COUNT(*) totalCount
       FROM room
       WHERE
-        ST_Intersects((SELECT polygon FROM area WHERE name = ?), geo) = 1
+        ST_Intersects(
+          (SELECT polygon FROM area WHERE name LIKE ?), geo
+        ) = 1
         ${roomOption ? `AND ${roomOption}` : ''}
     `
 
     const getAreaRoom = pool
-      .execute<any[]>(roomStatement, [areaName, String(offset), String(size)])
+      .execute<any[]>(roomStatement, [
+        `%${areaName}%`,
+        String(offset),
+        String(size)
+      ])
       .then(async ([roomsRes]) => {
         const extendExe: Promise<any>[] = []
         for (const room of roomsRes) {
@@ -103,9 +111,9 @@ const areaService: IAreaService = {
       })
 
     const getTotalCount = pool
-      .execute<any[]>(totalCountStatement, [areaName])
+      .execute<any[]>(totalCountStatement, [`%${areaName}%`])
       .then((totalCountExeRes) => {
-        return totalCountExeRes[0][0].totalCount
+        return totalCountExeRes[0][0].totalCount as number
       })
 
     const res = await Promise.all([getAreaRoom, getTotalCount])
