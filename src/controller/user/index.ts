@@ -1,6 +1,7 @@
 import userService from '@/service/user'
 
 import type IUserController from './types'
+import { IUserOptions } from './types'
 
 const userController: IUserController = {
   async create(ctx) {
@@ -16,12 +17,14 @@ const userController: IUserController = {
 
   async detail(ctx) {
     const { userId } = ctx.params
+    const isOwner = ctx.isOwner
 
     const userInfo = await userService.detail(userId)
+    const options: IUserOptions = { isOwner }
 
     ctx.body = {
       code: 200,
-      data: userInfo
+      data: { userInfo, options }
     }
   }
 }

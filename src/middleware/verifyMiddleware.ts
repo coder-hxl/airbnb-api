@@ -69,3 +69,23 @@ export const verifyAuth: Middleware = async (ctx, next) => {
 
   await next()
 }
+
+export const verifyIsOwner: Middleware = async (ctx, next) => {
+  const { userId } = ctx.params
+  const token = ctx.header.authorization?.replace('Bearer ', '')
+
+  if (!token) {
+    ctx.isOwner = false
+
+    return await next()
+  }
+
+  try {
+    const user: any = jwt.verify(token, PUBLIC_KEY, { algorithms: ['RS256'] })
+    ctx.isOwner = userId == user.id
+  } catch {
+    ctx.isOwner = false
+  }
+
+  await next()
+}

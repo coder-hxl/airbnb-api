@@ -3,6 +3,7 @@ import type { IUserTable } from '../tableTypes'
 
 export interface IDetail {
   id?: number
+  name?: string
   nikename?: string | null
   cellphone?: number
   introduce?: string | null

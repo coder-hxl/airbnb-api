@@ -22,7 +22,7 @@ const userService: IUserService = {
   async detail(userId) {
     const statement = `
       SELECT
-        id, nickname, cellphone, introduce,
+        id, name, nickname, cellphone, introduce,
         avatar_url avatarUrl, create_at createAt
       FROM user WHERE id = ?;
     `
