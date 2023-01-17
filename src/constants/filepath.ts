@@ -10,3 +10,5 @@ export const UPLOAD_PATH = path.resolve(__dirname, '../../upload')
 
 export const ROOM_PICTURE_PATH = path.resolve(UPLOAD_PATH, 'room')
 export const AREA_PICTURE_PATH = path.resolve(UPLOAD_PATH, 'area')
+
+export const AVATAR_PATCH = path.resolve(UPLOAD_PATH, 'avatar')

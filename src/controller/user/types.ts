@@ -1,3 +1,4 @@
+import { ReadStream } from 'node:fs'
 import { IControllerMiddleware } from '../types'
 
 export interface IUserOptions {
@@ -9,5 +10,10 @@ export default interface IUserController {
   detail: IControllerMiddleware<
     any,
     { params: { userId: string }; isOwner: boolean }
+  >
+  avatarInfo: IControllerMiddleware<
+    any,
+    { params: { userId: string; filename: string } },
+    ReadStream
   >
 }

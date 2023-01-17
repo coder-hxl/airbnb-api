@@ -9,4 +9,6 @@ const userRouter = new Router({ prefix: '/user' })
 userRouter.post('/', verifyCreateUser, passwordHandle, userController.create)
 userRouter.get('/:userId', verifyIsOwner, userController.detail)
 
+userRouter.get('/:userId/avatar/:filename', userController.avatarInfo)
+
 export default userRouter

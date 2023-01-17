@@ -1,4 +1,8 @@
+import fs from 'node:fs'
+
 import userService from '@/service/user'
+import commonService from '@/service/common'
+import { AVATAR_PATCH } from '@/constants/filepath'
 
 import type IUserController from './types'
 import { IUserOptions } from './types'
@@ -26,6 +30,16 @@ const userController: IUserController = {
       code: 200,
       data: { userInfo, options }
     }
+  },
+
+  async avatarInfo(ctx) {
+    const { filename } = ctx.params
+    const url = ctx.href
+
+    const results = await commonService.select('avatar', { url })
+
+    ctx.response.set('content-type', results[0].mimetype)
+    ctx.body = fs.createReadStream(`${AVATAR_PATCH}/${filename}`)
   }
 }
 
