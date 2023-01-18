@@ -1,5 +1,4 @@
-import { USE_GITHUB_REP } from '@/app/config'
-import { GITHUB_ROOM_PICTURE } from '@/constants/filepath'
+import { roomPictureBed } from './pictureBed'
 
 interface IRoom extends Object {
   id: number
@@ -11,29 +10,18 @@ interface IRoom extends Object {
 }
 
 export function extendRoom(room: IRoom) {
-  // 是否使用 github 图床, 默认使用
-  if (USE_GITHUB_REP) {
-    const { id, coverUrl } = room
+  const { id, coverUrl, pictureUrls, starRating, reviewsCount } = room
 
-    const changUrl = (url: string) => {
-      const filename = url.split('/room_picture/')[1]
-      return `${GITHUB_ROOM_PICTURE}/${id}/${filename}`
-    }
+  room.coverUrl = roomPictureBed(id, coverUrl)
 
-    room.coverUrl = changUrl(coverUrl)
-
-    if (room.pictureUrls) {
-      room.pictureUrls = room.pictureUrls.map(changUrl)
-    }
+  if (pictureUrls) {
+    room.pictureUrls = roomPictureBed(id, pictureUrls)
   }
 
-  if (
-    typeof room.starRating != 'undefined' &&
-    typeof room.reviewsCount != 'undefined'
-  ) {
-    room.starRating = Number(room.starRating)
+  if (typeof starRating != 'undefined' && typeof reviewsCount != 'undefined') {
+    room.starRating = Number(starRating)
     // 是否满足超赞条件
-    if (room.reviewsCount >= 88 && room.starRating >= 4.8) {
+    if (reviewsCount >= 88 && room.starRating >= 4.8) {
       room.scoreDesc = '超赞房东'
     }
   }

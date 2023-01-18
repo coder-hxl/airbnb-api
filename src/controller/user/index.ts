@@ -6,6 +6,7 @@ import { AVATAR_PATCH } from '@/constants/filepath'
 
 import type IUserController from './types'
 import { IUserOptions } from './types'
+import { avatarPictureBed } from '@/utils/pictureBed'
 
 const userController: IUserController = {
   async create(ctx) {
@@ -25,6 +26,11 @@ const userController: IUserController = {
 
     const userInfo = await userService.detail(userId)
     const options: IUserOptions = { isOwner }
+
+    // 使用 github 图床
+    if (userInfo.avatarUrl) {
+      userInfo.avatarUrl = avatarPictureBed(userInfo.avatarUrl)
+    }
 
     ctx.body = {
       code: 200,

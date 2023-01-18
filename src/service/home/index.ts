@@ -1,8 +1,7 @@
 import pool from '@/app/database'
 import { extendRoom } from '@/utils/extendRoom'
 
-import { USE_GITHUB_REP } from '@/app/config'
-import { GITHUB_AREA_PICTURE } from '@/constants/filepath'
+import { areaPictureBed } from '@/utils/pictureBed'
 
 import IHomeService, { IHomeRoom, IArea, IAreaRoom, IAreaRooms } from './types'
 
@@ -187,13 +186,7 @@ const homeService: IHomeService = {
     const res = citys.map((item, index) => {
       const { id, city, pictureUrl } = item
       const { price } = pricesExeRes[index][0][0] as { price: string }
-
-      let url = pictureUrl
-      // 使用 github 图床
-      if (USE_GITHUB_REP) {
-        const filename = pictureUrl.split('/picture/')[1]
-        url = `${GITHUB_AREA_PICTURE}/${filename}`
-      }
+      const url = areaPictureBed(pictureUrl)
 
       return { id, city, price, pictureUrl: url }
     })
