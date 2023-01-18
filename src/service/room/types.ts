@@ -1,9 +1,3 @@
-export interface IDetailStatementObj {
-  rootStatement: string
-  pictureUrlStatement: string
-  bedTypeStatement: string
-}
-
 export interface IDetailCommonRes extends Object {
   id: number
   name: string
@@ -30,12 +24,6 @@ export interface IDetailQueryRes extends IDetailCommonRes {
   }
 }
 
-export interface IDetailRes extends IDetailCommonRes {
-  lng: number
-  lat: number
-  scoreDesc: string | null
-}
-
 export interface IReview {
   starRating: number
   reviewCount: number
@@ -53,6 +41,6 @@ export interface IReview {
 }
 
 export default interface IRoomService {
-  detail(roomId: string): Promise<IDetailRes>
+  detail(roomId: string): Promise<IDetailQueryRes>
   review(roomId: number, offset: string, size: string): Promise<IReview>
 }
