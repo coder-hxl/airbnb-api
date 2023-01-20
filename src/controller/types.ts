@@ -12,17 +12,19 @@ export type IControllerMiddleware<
   D = IDefaultBody
 > = Middleware<S, C, D>
 
-interface IAuth extends Object {
-  user: {
-    id: number
-    name: string
-    iat: number
-    exp: number
-  }
-}
-
 export type IAuthMiddleware<
   S = DefaultState,
-  C extends IAuth = DefaultContext & IAuth,
+  C = DefaultContext,
   D = IDefaultBody
-> = Middleware<S, C, D>
+> = Middleware<
+  S,
+  C & {
+    user: {
+      id: number
+      name: string
+      iat: number
+      exp: number
+    }
+  },
+  D
+>

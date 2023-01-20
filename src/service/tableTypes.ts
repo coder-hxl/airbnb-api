@@ -6,9 +6,8 @@ export interface ICommonField extends Object {
 
 export interface IUserTable extends ICommonField {
   name: string
-  nickname?: string
   password: string
   cellphone: string
-  introduce?: string
-  avatarUrl?: string
+  introduce: string | null
+  avatarUrl: string | null
 }

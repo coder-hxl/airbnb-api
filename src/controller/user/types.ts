@@ -1,5 +1,5 @@
 import { ReadStream } from 'node:fs'
-import { IControllerMiddleware } from '../types'
+import { IAuthMiddleware, IControllerMiddleware } from '../types'
 
 export interface IUserOptions {
   isOwner?: boolean
@@ -11,6 +11,7 @@ export default interface IUserController {
     any,
     { params: { userId: string }; isOwner: boolean }
   >
+  update: IAuthMiddleware<any, { params: { userId: string } }>
   avatarInfo: IControllerMiddleware<
     any,
     { params: { userId: string; filename: string } },

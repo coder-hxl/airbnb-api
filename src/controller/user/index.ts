@@ -2,21 +2,41 @@ import fs from 'node:fs'
 
 import userService from '@/service/user'
 import commonService from '@/service/common'
+import { filterObj } from '@/utils/filter'
+import {
+  USER_TABLE_CREATE_FILTER,
+  USER_TABLE_UPDATE_FILTER
+} from '@/constants/table'
 import { AVATAR_PATCH } from '@/constants/filepath'
 
 import type IUserController from './types'
 import { IUserOptions } from './types'
 import { avatarPictureBed } from '@/utils/pictureBed'
+import { ICreateInfo, IUpdateInfo } from '@/service/user/types'
 
 const userController: IUserController = {
   async create(ctx) {
     const userInfo = ctx.request.body
 
-    const result = await userService.create(userInfo)
+    const info = filterObj<ICreateInfo>(userInfo, USER_TABLE_CREATE_FILTER)
+    const result = await userService.create(info)
 
     ctx.body = {
       code: 200,
       data: result
+    }
+  },
+
+  async update(ctx) {
+    const { id } = ctx.user
+    const info = ctx.request.body
+
+    const updateInfo = filterObj<IUpdateInfo>(info, USER_TABLE_UPDATE_FILTER)
+    await userService.update(id, updateInfo)
+
+    ctx.body = {
+      code: 200,
+      data: '修改成功~'
     }
   },
 

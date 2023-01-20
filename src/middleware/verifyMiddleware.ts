@@ -40,7 +40,7 @@ export const verifyLogin: Middleware = async (ctx, next) => {
     password: hashCrypto(password)
   })
 
-  if (!Object.keys(user).length) {
+  if (!user) {
     return ctx.app.emit(
       'error',
       new Error(errorTypes.NAME_OR_PASSWORD_IS_ERROR),

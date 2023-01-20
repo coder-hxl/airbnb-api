@@ -1,6 +1,9 @@
 import type { AnyObject } from '@/types/commonTypes'
 
-export function filterObj(rawObj: AnyObject, extract: string[]) {
+export function filterObj<T = AnyObject>(
+  rawObj: AnyObject,
+  extract: readonly string[]
+): T {
   const result: AnyObject = {}
   const rawKeys = Object.keys(rawObj)
 
@@ -11,5 +14,5 @@ export function filterObj(rawObj: AnyObject, extract: string[]) {
     }
   }
 
-  return result
+  return result as T
 }

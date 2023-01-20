@@ -1,22 +1,27 @@
 import pool from '@/app/database'
-import { filterObj } from '@/utils/filter'
 import mapSqlStatement from '@/utils/mapSqlStatement'
-import { USER_TABLE_CREATE, USER_TABLE_NAME } from '@/constants/table'
 
 import type { ResultSetHeader } from 'mysql2'
 import IUserService, { IDetail } from './types'
 
 const userService: IUserService = {
   async create(userInfo) {
-    const { inserts, placeholders, values } = mapSqlStatement.create(
-      filterObj(userInfo, USER_TABLE_CREATE)
-    )
+    const { inserts, placeholders, values } = mapSqlStatement.create(userInfo)
 
-    const statement = `INSERT INTO ${USER_TABLE_NAME} (${inserts.join()}) VALUES (${placeholders.join()});`
+    const statement = `INSERT INTO user (${inserts.join()}) VALUES (${placeholders.join()});`
 
-    const [result] = await pool.execute<ResultSetHeader>(statement, values)
+    await pool.execute<ResultSetHeader>(statement, values)
 
-    return result
+    return true
+  },
+
+  async update(userId, updateInfo) {
+    const { updates, values } = mapSqlStatement.update(updateInfo)
+    const statement = `UPDATE user SET ${updates.join()} WHERE id = ?;`
+
+    await pool.execute(statement, [...values, userId])
+
+    return true
   },
 
   async detail(userId) {
