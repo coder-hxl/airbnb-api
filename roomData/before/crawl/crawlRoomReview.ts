@@ -2,7 +2,7 @@ import { get, sleep } from './common'
 
 import pool from '@/app/database'
 
-import { getRoomReviewUrl } from 'roomData/config'
+import { getRoomReviewUrl } from '../config'
 
 function getSize(min: number, max: number): number {
   const res = Math.floor(Math.random() * max)

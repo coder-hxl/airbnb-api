@@ -3,7 +3,7 @@ import '@/app/database'
 
 import { APP_PORT } from '@/app/config'
 
-// 请求 room 数据到数据库中
+// 爬取 room 数据到数据库中
 // import 'roomData'
 
 app.listen(APP_PORT, () => {
