@@ -46,6 +46,6 @@
     "rollup": "^3.5.1",
     "rollup-plugin-typescript2": "^0.34.1",
     "typescript": "^4.9.3",
-    "x-crawl": "^2.3.0"
+    "x-crawl": "^7.0.1"
   }
 }
