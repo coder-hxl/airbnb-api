@@ -1,6 +1,6 @@
 # Airbnb-API
 
-Airbnb-API 是 Airbnb 接口。拥有房源搜索、地区房源、更多地区房源、房源详情、个人信息的 API ，采用 REST 设计风格。
+Airbnb-API 是基于 NodeJS、TypeScript 、Koa、MySQL、x-crawl 等技术实现的 Airbnb API 。拥有房源搜索、地区房源、更多地区房源、房源详情、个人信息的 API ，采用 REST 设计风格。
 
 > 如果对您有帮助，可以给 [Airbnb-API 存储库](https://github.com/coder-hxl/airbnb-api) 点个 star 支持一下！
 
